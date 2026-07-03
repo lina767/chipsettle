@@ -39,7 +39,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: null,
       size_restrictions: 'any',
@@ -99,7 +99,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: false,
+      entity_requirement: 'any_presence',
       requires_local_rd_substance: false,
       business_models: null,
       size_restrictions: 'any',
@@ -145,7 +145,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: false,
       business_models: null,
       size_restrictions: 'any',
@@ -199,7 +199,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'legal_entity',
       requires_local_rd_substance: true,
       business_models: ['fabless', 'ip_licensing', 'idm', 'eda_tools'],
       size_restrictions: 'any',
@@ -257,7 +257,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: ['fabless', 'ip_licensing', 'idm', 'eda_tools'],
       size_restrictions: 'any',
@@ -308,7 +308,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: false,
       business_models: null,
       size_restrictions: 'any',
@@ -359,7 +359,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: null,
       size_restrictions: 'any',
@@ -408,7 +408,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: null,
       size_restrictions: 'any',
@@ -452,7 +452,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: ['fabless', 'ip_licensing', 'idm', 'eda_tools'],
       size_restrictions: 'any',
@@ -511,7 +511,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: null,
       size_restrictions: 'any',
@@ -567,7 +567,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'taxable_presence',
       requires_local_rd_substance: true,
       business_models: ['fabless', 'ip_licensing', 'idm', 'eda_tools'],
       size_restrictions: 'any',
@@ -615,7 +615,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'legal_entity',
       requires_local_rd_substance: true,
       business_models: null,
       size_restrictions: 'any',
@@ -661,7 +661,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'eu_plus_associated',
-      requires_local_entity: true,
+      entity_requirement: 'legal_entity',
       requires_local_rd_substance: false,
       business_models: null,
       size_restrictions: 'sme_only',
@@ -704,7 +704,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'eu_plus_associated',
-      requires_local_entity: true,
+      entity_requirement: 'legal_entity',
       requires_local_rd_substance: false,
       business_models: null,
       size_restrictions: 'any',
@@ -747,7 +747,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'eu_plus_associated',
-      requires_local_entity: true,
+      entity_requirement: 'legal_entity',
       requires_local_rd_substance: false,
       business_models: ['fabless', 'ip_licensing', 'idm', 'eda_tools'],
       size_restrictions: 'any',
@@ -792,7 +792,7 @@ export const instruments: Instrument[] = [
     ],
     eligibility: {
       hq_countries: 'any',
-      requires_local_entity: true,
+      entity_requirement: 'legal_entity',
       requires_local_rd_substance: true,
       business_models: null,
       size_restrictions: 'any',

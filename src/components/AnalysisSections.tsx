@@ -12,7 +12,7 @@ import {
   REVENUE_MIDPOINT_EUR,
   hasEstimateInputs,
 } from '../lib/analysis';
-import { instrumentTypeColors, sectorLabels } from '../lib/labels';
+import { industryLabels, instrumentTypeColors, sectorLabels } from '../lib/labels';
 
 const eur = (n: number) =>
   n >= 1_000_000
@@ -194,7 +194,7 @@ export function RoadmapView({
                   ) : (
                     <span className="font-medium">{s.title}</span>
                   )}
-                  <span className="text-xs text-slate-400">· {s.timeline}</span>
+                  {s.timeline && <span className="text-xs text-slate-400">· {s.timeline}</span>}
                   <span className="basis-full pl-3.5 text-xs text-slate-500">{s.detail}</span>
                 </li>
               ))}
@@ -218,7 +218,9 @@ export function EcosystemFitView({
   countrySlug: string;
 }) {
   const fit = ecosystemFit(countrySlug, profile);
-  if (fit.matches.length === 0 && fit.unmatchedSectors.length === 0) return null;
+  const hasAnyInput = profile.sectors.length + profile.industries.length > 0;
+  if (!hasAnyInput || (fit.matches.length === 0 && fit.unmatchedSectors.length === 0 && fit.unmatchedIndustries.length === 0))
+    return null;
   const pct = Math.round(fit.coverage * 100);
   const band = pct >= 67 ? 'strong' : pct >= 34 ? 'partial' : 'limited';
   const bandColor =
@@ -227,13 +229,20 @@ export function EcosystemFitView({
       : band === 'partial'
         ? 'text-amber-700'
         : 'text-slate-500';
+  const matchLine = (m: { matchedSectors: typeof fit.matches[number]['matchedSectors']; matchedIndustries: typeof fit.matches[number]['matchedIndustries'] }) => {
+    const parts = [
+      ...m.matchedSectors.map((s) => sectorLabels[s]),
+      ...m.matchedIndustries.map((i) => industryLabels[i]),
+    ];
+    return parts.join(', ');
+  };
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 print-break-inside-avoid">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-slate-900 text-sm">Ecosystem fit for your sectors</h3>
+        <h3 className="font-semibold text-slate-900 text-sm">Ecosystem fit for your sectors &amp; industries</h3>
         <span className={`text-xs font-semibold ${bandColor}`}>
-          {pct}% sector coverage · {band}
+          {pct}% coverage · {band}
         </span>
       </div>
       {fit.matches.length > 0 ? (
@@ -242,20 +251,19 @@ export function EcosystemFitView({
             <li key={m.ecosystemName} className="text-sm text-slate-700">
               <span className="font-medium">{m.ecosystemName}</span>{' '}
               <span className="text-slate-400 text-xs">({m.city})</span>
-              <span className="block text-xs text-slate-500">
-                matches your {m.matchedSectors.map((s) => sectorLabels[s]).join(', ')}
-              </span>
+              <span className="block text-xs text-slate-500">matches your {matchLine(m)}</span>
             </li>
           ))}
         </ul>
       ) : (
         <p className="text-sm text-slate-500">
-          No seeded regional cluster in this country matches your selected sectors.
+          No seeded regional cluster in this country matches your selected sectors or industries.
         </p>
       )}
-      {fit.unmatchedSectors.length > 0 && (
+      {(fit.unmatchedSectors.length > 0 || fit.unmatchedIndustries.length > 0) && (
         <p className="mt-2 text-xs text-amber-700">
-          Not covered locally: {fit.unmatchedSectors.map((s) => sectorLabels[s]).join(', ')}
+          Not covered locally:{' '}
+          {[...fit.unmatchedSectors.map((s) => sectorLabels[s]), ...fit.unmatchedIndustries.map((i) => industryLabels[i])].join(', ')}
         </p>
       )}
     </div>

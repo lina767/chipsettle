@@ -5,6 +5,8 @@ import { getCountry } from '../../data/countries';
 import { TypeBadge, StatusBadge, VerificationLine } from '../../components/Badges';
 import {
   businessModelLabels,
+  entityRequirementHelp,
+  entityRequirementLabels,
   formatDate,
   goalLabels,
   mechanismHelp,
@@ -101,8 +103,11 @@ const sortedChangelog = [...i.changelog].sort((a, b) => b.date.localeCompare(a.d
           <dd class="text-slate-900">{hqLabel[i.eligibility.hq_countries]}</dd>
         </div>
         <div class="flex gap-4 px-4 py-2.5">
-          <dt class="w-40 shrink-0 text-slate-500">Local entity</dt>
-          <dd class="text-slate-900">{i.eligibility.requires_local_entity ? 'Required' : 'Not required'}</dd>
+          <dt class="w-40 shrink-0 text-slate-500">Local presence</dt>
+          <dd class="text-slate-900">
+            {entityRequirementLabels[i.eligibility.entity_requirement]}
+            <span class="block text-xs text-slate-500 mt-0.5">{entityRequirementHelp[i.eligibility.entity_requirement]}</span>
+          </dd>
         </div>
         <div class="flex gap-4 px-4 py-2.5">
           <dt class="w-40 shrink-0 text-slate-500">Local R&D substance</dt>

@@ -2,8 +2,11 @@ import type {
   BusinessModel,
   CompanySize,
   EligibilityStatus,
+  EntityKind,
+  EntityRequirement,
   Goal,
   HqCountry,
+  Industry,
   InstrumentStatus,
   InstrumentType,
   LegalStepType,
@@ -69,6 +72,44 @@ export const goalLabels: Record<Goal, string> = {
   fab_site: 'Manufacturing / fab site',
   pilot_lines: 'Access to pilot lines & prototyping',
   ip_domiciliation: 'IP domiciliation',
+};
+
+export const industryLabels: Record<Industry, string> = {
+  automotive: 'Automotive',
+  robotics: 'Robotics',
+  consumer_electronics: 'Consumer electronics',
+  industrial_automation: 'Industrial automation',
+  aerospace_defense: 'Aerospace & defense',
+  telecom_5g: 'Telecom / 5G',
+  data_center_hpc: 'Data center / HPC',
+  medical_devices: 'Medical devices',
+  energy_grid: 'Energy & grid',
+  other: 'Other',
+};
+
+/**
+ * The nuance behind "local entity required": most fiscal entitlements only
+ * need a taxable presence (a branch office is enough); grant programs
+ * generally require a separate legal entity as the contracting party.
+ */
+export const entityRequirementLabels: Record<EntityRequirement, string> = {
+  any_presence: 'No local presence required for this point',
+  taxable_presence: 'Local tax presence required (branch is sufficient)',
+  legal_entity: 'Separate legal entity required',
+};
+
+export const entityRequirementHelp: Record<EntityRequirement, string> = {
+  any_presence: 'This specific point does not depend on how you are present locally.',
+  taxable_presence:
+    'A branch office (Zweigniederlassung/permanent establishment) of your existing company is enough — you do not need to form a new legal entity such as a GmbH or BV.',
+  legal_entity:
+    'The applicant must be a separate legal person (e.g. GmbH, BV, SARL) — a branch office of a foreign company does not qualify here.',
+};
+
+export const entityKindLabels: Record<EntityKind, string> = {
+  legal_entity: 'Legal entity (e.g. GmbH/BV/SARL)',
+  branch: 'Branch office (no new legal entity)',
+  eor: 'Employer of Record (no entity at all)',
 };
 
 export const instrumentTypeLabels: Record<InstrumentType, string> = {

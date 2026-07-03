@@ -58,6 +58,26 @@ const proposed = instruments.filter((i) => i.status === 'proposed');
     </section>
 
     <section class="space-y-3">
+      <h2 class="text-xl font-semibold text-slate-900">Local presence: entity, branch, or none</h2>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        A foreign company does not always need to form a new legal entity (GmbH/BV/SARL) to access an
+        instrument. Each instrument now records one of three levels:
+      </p>
+      <ul class="text-sm text-slate-600 space-y-1.5 list-disc pl-5">
+        <li><strong>No local presence required</strong> — the point does not depend on where you are established.</li>
+        <li><strong>Local tax presence required</strong> — a branch office (a permanent establishment of your existing company) is sufficient. Most R&amp;D tax credits, payroll instruments, and IP boxes fall here, because they attach to domestic tax liability, not to a specific legal form.</li>
+        <li><strong>Separate legal entity required</strong> — the applicant must be its own legal person. Most grant programs fall here, because the funding agreement is contracted with a legal entity.</li>
+      </ul>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Every matched instrument shows this on its detail page, the action roadmap opens each country
+        with a "Choose your entity path" recommendation based on what was actually matched, and the
+        country page lists the branch and Employer-of-Record alternatives alongside full incorporation.
+        This is orientation, not a substitute for corporate and tax advice — entity choice also affects
+        liability, VAT, and banking, which this tool does not model.
+      </p>
+    </section>
+
+    <section class="space-y-3">
       <h2 class="text-xl font-semibold text-slate-900">Verification &amp; datedness</h2>
       <p class="text-sm text-slate-600 leading-relaxed">
         Every instrument carries a <strong>last-verified date</strong>, a verification source, and a

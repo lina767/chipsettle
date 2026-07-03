@@ -6,13 +6,41 @@ export const legalSteps: LegalStep[] = [
     country: 'germany',
     step_type: 'company_formation',
     title: 'Form a GmbH (limited liability company)',
+    entity_kind: 'legal_entity',
     description:
-      'Standard vehicle for a German design subsidiary. Notarized articles of association, share capital of €25,000 (min. €12,500 paid in at registration), registration in the commercial register (Handelsregister).',
+      'Standard vehicle for a German design subsidiary. Notarized articles of association, share capital of €25,000 (min. €12,500 paid in at registration), registration in the commercial register (Handelsregister). Gives full liability separation from the parent and is required for most grant programs, which contract with a separate legal entity.',
     typical_timeline: '2–6 weeks',
     requirements:
       'Notarized formation deed; managing director (no residency requirement, but practical availability needed); German business address; bank account for capital deposit.',
     costs: '€25,000 share capital (€12,500 paid in) + ~€1,500–3,000 notary/registration fees',
     source_url: 'https://www.existenzgruender.de/',
+    last_verified: '2026-07-03',
+  },
+  {
+    country: 'germany',
+    step_type: 'company_formation',
+    title: 'Register a Zweigniederlassung (branch office)',
+    entity_kind: 'branch',
+    description:
+      'A lighter alternative to a GmbH: the existing foreign company registers a branch with the Handelsregister and the Finanzamt, without forming a new legal entity. A German branch is a taxable permanent establishment (Betriebsstätte), which is sufficient to claim most rule-based fiscal instruments — including the Forschungszulage — since those attach to German tax liability, not to a specific legal form. You give up liability separation: the foreign parent is directly liable. Most grant programs still require a separate legal entity.',
+    typical_timeline: '2–4 weeks',
+    requirements:
+      'Excerpt from the foreign company\'s home register (apostilled/legalized as needed); German business address; registered branch manager (Zweigniederlassungsleiter).',
+    costs: '~€200–500 notary/registration fees; no minimum capital',
+    source_url: 'https://www.existenzgruender.de/',
+    last_verified: '2026-07-03',
+  },
+  {
+    country: 'germany',
+    step_type: 'company_formation',
+    title: 'Employer of Record (no local entity)',
+    entity_kind: 'eor',
+    description:
+      'Fastest way to have engineers on the ground: a third-party EOR provider formally employs your German staff and handles payroll, social security, and wage tax, while you keep operational control. No German entity is formed at all. Trade-off: you are not the taxpayer performing the R&D, so this route generally disqualifies you from the Forschungszulage and most instruments that require the applicant to be the domestic entity claiming its own costs. Best treated as a bridge, not a long-term structure, if fiscal instruments matter to you.',
+    typical_timeline: 'Days to ~2 weeks',
+    requirements: 'Service agreement with an EOR/PEO provider; no German registration of your own company needed.',
+    costs: 'Market rate, provider-dependent — commonly quoted as a per-employee monthly service fee',
+    source_url: 'https://www.make-it-in-germany.com/en/working-in-germany',
     last_verified: '2026-07-03',
   },
   {
@@ -57,12 +85,26 @@ export const legalSteps: LegalStep[] = [
     country: 'netherlands',
     step_type: 'company_formation',
     title: 'Form a BV (private limited company)',
+    entity_kind: 'legal_entity',
     description:
-      'Standard vehicle for a Dutch design subsidiary. Notarial deed of incorporation; minimum capital of €0.01; registration with the KVK (Chamber of Commerce).',
+      'Standard vehicle for a Dutch design subsidiary. Notarial deed of incorporation; minimum capital of €0.01; registration with the KVK (Chamber of Commerce). Gives full liability separation and is generally required to hold and license IP under the Innovation Box on your own account.',
     typical_timeline: '1–2 weeks',
     requirements: 'Notarial deed; Dutch registered address; UBO registration.',
     costs: '~€1,000–2,500 notary fees + €80 KVK registration',
     source_url: 'https://business.gov.nl/starting-your-business/choosing-a-business-structure/besloten-vennootschap-bv/',
+    last_verified: '2026-07-03',
+  },
+  {
+    country: 'netherlands',
+    step_type: 'company_formation',
+    title: 'Register a branch (buitenlandse vennootschap) with the KVK',
+    entity_kind: 'branch',
+    description:
+      'A foreign company can register a Dutch branch instead of incorporating a BV. The branch becomes a Vpb (corporate tax) taxpayer on its Dutch activity, which is generally sufficient for WBSO and the Innovation Box on the branch\'s own qualifying R&D — but you keep the parent company\'s liability and lose the separate legal personality most grant applications expect.',
+    typical_timeline: '~1–2 weeks',
+    requirements: 'Excerpt from the foreign company\'s home register; Dutch business address.',
+    costs: '€80 KVK registration; minimal notary cost',
+    source_url: 'https://business.gov.nl/starting-your-business/choosing-a-business-structure/setting-up-a-branch-office/',
     last_verified: '2026-07-03',
   },
   {

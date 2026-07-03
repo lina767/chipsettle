@@ -54,6 +54,34 @@ export type Goal =
   | 'pilot_lines'
   | 'ip_domiciliation';
 
+/** End-market / customer industry the company's chips ultimately serve. */
+export type Industry =
+  | 'automotive'
+  | 'robotics'
+  | 'consumer_electronics'
+  | 'industrial_automation'
+  | 'aerospace_defense'
+  | 'telecom_5g'
+  | 'data_center_hpc'
+  | 'medical_devices'
+  | 'energy_grid'
+  | 'other';
+
+/**
+ * How much of a local presence an instrument actually requires. This is the
+ * nuance behind the old "local entity: yes/no" flag: most fiscal
+ * entitlements only need a taxable presence (a branch/Zweigniederlassung of
+ * the existing foreign company is enough), while grant programs generally
+ * require a separate legal entity as the contracting party.
+ */
+export type EntityRequirement =
+  | 'any_presence' // no local presence needed to claim this specific point
+  | 'taxable_presence' // a branch office / permanent establishment is enough
+  | 'legal_entity'; // must be a separate legal person (GmbH/BV/SARL/...)
+
+/** How a legal_steps company_formation entry satisfies entity requirements. */
+export type EntityKind = 'legal_entity' | 'branch' | 'eor';
+
 export type InstrumentType =
   | 'rd_tax_credit'
   | 'ip_box'
@@ -100,7 +128,8 @@ export interface InstrumentParameter {
 export interface Eligibility {
   hq_countries: 'any' | 'eu_only' | 'eu_plus_associated' | 'specific';
   hq_country_list?: HqCountry[]; // if 'specific'
-  requires_local_entity: boolean;
+  /** Replaces a plain yes/no: how much local presence this instrument needs. */
+  entity_requirement: EntityRequirement;
   requires_local_rd_substance: boolean;
   /** null = all business models qualify */
   business_models: BusinessModel[] | null;
@@ -175,6 +204,8 @@ export interface Ecosystem {
   region: string;
   city: string;
   strengths: Sector[];
+  /** End-market industries this cluster is genuinely known for (informational, not individually sourced). */
+  industries: Industry[];
   key_institutions: { name: string; type: string; relevance: string }[];
   cluster_programs: { name: string; url: string; description: string }[];
   notes: string;
@@ -203,6 +234,8 @@ export interface LegalStep {
   costs: string;
   source_url: string;
   last_verified: string;
+  /** For company_formation entries: which of the three entity paths this is. */
+  entity_kind?: EntityKind;
 }
 
 // ---------------------------------------------------------------------------
@@ -215,6 +248,8 @@ export interface CompanyProfile {
   companySize: CompanySize;
   revenue: RevenueBand;
   sectors: Sector[];
+  /** End-market industries the company serves (optional, informs ecosystem fit). */
+  industries: Industry[];
   goal: Goal;
   /** country slugs; empty array = compare all available countries */
   targetCountries: string[];
@@ -294,15 +329,18 @@ export interface CountryEstimate {
 
 export interface EcosystemFit {
   countrySlug: string;
-  /** 0..1 share of the company's sectors covered by the region's clusters. */
+  /** 0..1 combined share of the company's sectors + industries covered locally. */
   coverage: number;
   matches: {
     ecosystemName: string;
     city: string;
     matchedSectors: Sector[];
+    matchedIndustries: Industry[];
   }[];
   /** Sectors the company selected that no local cluster covers. */
   unmatchedSectors: Sector[];
+  /** Industries the company selected that no local cluster covers. */
+  unmatchedIndustries: Industry[];
 }
 
 export type RoadmapPhaseId =

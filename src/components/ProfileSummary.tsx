@@ -4,6 +4,7 @@ import {
   companySizeLabels,
   goalLabels,
   hqCountryLabels,
+  industryLabels,
   revenueBandLabels,
   sectorLabels,
 } from '../lib/labels';
@@ -18,6 +19,7 @@ export default function ProfileSummary({ profile }: { profile: CompanyProfile })
     companySizeLabels[profile.companySize].split(' (')[0],
     `Revenue ${revenueBandLabels[profile.revenue]}`,
     ...profile.sectors.map((s) => sectorLabels[s]),
+    ...profile.industries.map((i) => industryLabels[i]),
   ];
 
   return (

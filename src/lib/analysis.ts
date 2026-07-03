@@ -3,6 +3,7 @@ import type {
   CountryEstimate,
   EcosystemFit,
   EstimateLine,
+  Industry,
   Instrument,
   InstrumentResult,
   RoadmapPhase,
@@ -12,7 +13,7 @@ import type {
 import { getCountry } from '../data/countries';
 import { ecosystemsByCountry } from '../data/ecosystems';
 import { legalStepsByCountry } from '../data/legalSteps';
-import { legalStepTypeLabels } from './labels';
+import { entityKindLabels, legalStepTypeLabels } from './labels';
 
 /**
  * Derived analyses on top of the decision-engine results:
@@ -186,19 +187,24 @@ export const formatEurShort = fmtEur;
 
 export function ecosystemFit(countrySlug: string, p: CompanyProfile): EcosystemFit {
   const ecos = ecosystemsByCountry(countrySlug);
-  const matched = new Set<Sector>();
+  const matchedSectors = new Set<Sector>();
+  const matchedIndustries = new Set<Industry>();
   const matches = ecos
     .map((e) => {
       const ms = p.sectors.filter((s) => e.strengths.includes(s));
-      ms.forEach((s) => matched.add(s));
-      return { ecosystemName: e.name, city: e.city, matchedSectors: ms };
+      const mi = p.industries.filter((ind) => e.industries.includes(ind));
+      ms.forEach((s) => matchedSectors.add(s));
+      mi.forEach((ind) => matchedIndustries.add(ind));
+      return { ecosystemName: e.name, city: e.city, matchedSectors: ms, matchedIndustries: mi };
     })
-    .filter((m) => m.matchedSectors.length > 0);
+    .filter((m) => m.matchedSectors.length > 0 || m.matchedIndustries.length > 0);
 
-  const unmatchedSectors = p.sectors.filter((s) => !matched.has(s));
-  const coverage = p.sectors.length > 0 ? matched.size / p.sectors.length : 0;
+  const unmatchedSectors = p.sectors.filter((s) => !matchedSectors.has(s));
+  const unmatchedIndustries = p.industries.filter((i) => !matchedIndustries.has(i));
+  const total = p.sectors.length + p.industries.length;
+  const coverage = total > 0 ? (matchedSectors.size + matchedIndustries.size) / total : 0;
 
-  return { countrySlug, coverage, matches, unmatchedSectors };
+  return { countrySlug, coverage, matches, unmatchedSectors, unmatchedIndustries };
 }
 
 // ---------------------------------------------------------------------------
@@ -258,6 +264,37 @@ const PHASE_ORDER: RoadmapPhase['id'][] = [
 ];
 
 /**
+ * The strictest entity requirement among the instruments actually matched
+ * for this country — tells you whether a branch office is enough or a
+ * separate legal entity is unavoidable, given what you are actually going
+ * to claim (not a generic "you probably want a GmbH" default).
+ */
+export type EntityPathRecommendation = 'legal_entity' | 'branch_ok' | 'flexible';
+
+export function recommendedEntityPath(
+  countrySlug: string,
+  results: InstrumentResult[],
+): EntityPathRecommendation {
+  const relevant = results.filter(
+    (r) =>
+      r.instrument.country === countrySlug &&
+      !r.instrument.is_absence &&
+      r.eligibility_status !== 'not_eligible',
+  );
+  if (relevant.some((r) => r.instrument.eligibility.entity_requirement === 'legal_entity'))
+    return 'legal_entity';
+  if (relevant.some((r) => r.instrument.eligibility.entity_requirement === 'taxable_presence'))
+    return 'branch_ok';
+  return 'flexible';
+}
+
+const ENTITY_REC_TEXT: Record<EntityPathRecommendation, string> = {
+  legal_entity: `At least one matched instrument requires a separate legal entity (${entityKindLabels.legal_entity}) — a branch office will not qualify for it, though it may still be worth registering a branch first if you need staff on the ground sooner.`,
+  branch_ok: `Every matched instrument only needs a local tax presence — a branch office (${entityKindLabels.branch}) is sufficient; forming a full subsidiary is a liability-protection choice, not a requirement here.`,
+  flexible: `No matched instrument on its own requires a formal local presence — but employing staff will still need at least a branch registration or an Employer of Record (${entityKindLabels.eor}).`,
+};
+
+/**
  * Build a phased roadmap for a single country: legal steps and matched
  * instruments merged into a sequence a company can actually follow.
  */
@@ -275,9 +312,21 @@ export function buildRoadmap(
     if (skipFormation && s.step_type === 'company_formation') continue;
     const phase = LEGAL_STEP_PHASE[s.step_type] ?? 'establish';
     buckets.get(phase)!.push({
-      title: s.title,
+      title: s.entity_kind ? `${s.title} (${entityKindLabels[s.entity_kind]})` : s.title,
       detail: `${legalStepTypeLabels[s.step_type]} · ${s.costs}`,
       timeline: s.typical_timeline,
+      kind: 'legal_step',
+    });
+  }
+
+  // Entity-path recommendation, based on what was actually matched — placed
+  // first in the 'establish' phase so it reads before the formation options.
+  if (!skipFormation && legalStepsByCountry(countrySlug).some((s) => s.step_type === 'company_formation')) {
+    const rec = recommendedEntityPath(countrySlug, results);
+    buckets.get('establish')!.unshift({
+      title: 'Choose your entity path',
+      detail: ENTITY_REC_TEXT[rec],
+      timeline: '',
       kind: 'legal_step',
     });
   }

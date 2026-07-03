@@ -5,6 +5,7 @@ import type {
   CompanySize,
   Goal,
   HqCountry,
+  Industry,
   RevenueBand,
   Sector,
 } from '../lib/types';
@@ -13,6 +14,7 @@ import {
   companySizeLabels,
   goalLabels,
   hqCountryLabels,
+  industryLabels,
   revenueBandLabels,
   sectorLabels,
 } from '../lib/labels';
@@ -93,6 +95,7 @@ export default function Wizard() {
   const [profile, setProfile] = useState<CompanyProfile>({
     ...defaultProfile,
     sectors: [],
+    industries: [],
     targetCountries: [],
   });
   const [compareAll, setCompareAll] = useState(false);
@@ -106,6 +109,14 @@ export default function Wizard() {
       profile.sectors.includes(s)
         ? profile.sectors.filter((x) => x !== s)
         : [...profile.sectors, s],
+    );
+
+  const toggleIndustry = (ind: Industry) =>
+    set(
+      'industries',
+      profile.industries.includes(ind)
+        ? profile.industries.filter((x) => x !== ind)
+        : [...profile.industries, ind],
     );
 
   const toggleCountry = (slug: string) => {
@@ -228,6 +239,20 @@ export default function Wizard() {
                 </ChipButton>
               ))}
             </div>
+          </Field>
+
+          <Field label="Industry focus (optional — select all that apply)">
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(industryLabels) as Industry[]).map((k) => (
+                <ChipButton key={k} selected={profile.industries.includes(k)} onClick={() => toggleIndustry(k)}>
+                  {industryLabels[k]}
+                </ChipButton>
+              ))}
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              The end markets your chips serve. Used to show ecosystem fit against regional
+              clusters known for these industries — it doesn't filter which instruments apply.
+            </p>
           </Field>
         </div>
       )}

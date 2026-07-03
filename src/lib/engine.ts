@@ -94,7 +94,7 @@ export function assessEligibility(
 
   // Local entity / local R&D substance requirements: preconditions the
   // company controls, but not yet met at planning stage.
-  if (i.eligibility.requires_local_entity) downgrades += 0; // assumed intent
+  if (i.eligibility.entity_requirement !== 'any_presence') downgrades += 0; // assumed intent
   if (i.eligibility.requires_local_rd_substance) downgrades += 0;
 
   // Pillar Two: above the €750M revenue ceiling the benefit is bounded.
@@ -192,8 +192,14 @@ export function generateNotes(i: Instrument, profile: CompanyProfile): string[] 
     );
   }
 
-  if (i.eligibility.requires_local_entity && profile.hqCountry !== 'eu') {
-    notes.push('Requires a local legal entity — factor company formation into your timeline.');
+  if (i.eligibility.entity_requirement === 'legal_entity' && profile.hqCountry !== 'eu') {
+    notes.push(
+      'Requires a separate legal entity (e.g. GmbH/BV/SARL) as the applicant — a branch office of your existing company is not sufficient here.',
+    );
+  } else if (i.eligibility.entity_requirement === 'taxable_presence' && profile.hqCountry !== 'eu') {
+    notes.push(
+      'Only needs a local tax presence to claim — a branch office of your existing company is enough; a new legal entity is not required.',
+    );
   }
 
   if (i.eligibility.requires_local_rd_substance) {

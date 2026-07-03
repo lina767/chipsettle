@@ -9,6 +9,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'Saxony',
     city: 'Dresden',
     strengths: ['logic', 'analog_mixed_signal', 'power', 'mems_sensors', 'riscv_open_isa'],
+    industries: ['automotive', 'industrial_automation', 'consumer_electronics'],
     key_institutions: [
       {
         name: 'Fraunhofer FMD (Forschungsfabrik Mikroelektronik Deutschland)',
@@ -44,6 +45,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'Bavaria',
     city: 'Munich',
     strengths: ['analog_mixed_signal', 'power', 'rf_mmwave', 'ai_accelerators', 'eda_design_tools'],
+    industries: ['automotive', 'robotics', 'industrial_automation', 'aerospace_defense'],
     key_institutions: [
       {
         name: 'TU München',
@@ -74,6 +76,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'North Brabant',
     city: 'Eindhoven',
     strengths: ['photonics', 'analog_mixed_signal', 'power', 'eda_design_tools', 'advanced_packaging'],
+    industries: ['robotics', 'industrial_automation', 'automotive', 'telecom_5g'],
     key_institutions: [
       {
         name: 'TU Eindhoven',
@@ -104,6 +107,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'Flemish Brabant',
     city: 'Leuven',
     strengths: ['logic', 'advanced_packaging', 'photonics', 'mems_sensors', 'ai_accelerators'],
+    industries: ['medical_devices', 'automotive', 'industrial_automation', 'telecom_5g'],
     key_institutions: [
       {
         name: 'imec',
@@ -135,6 +139,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'Auvergne-Rhône-Alpes',
     city: 'Grenoble',
     strengths: ['logic', 'riscv_open_isa', 'photonics', 'mems_sensors', 'power'],
+    industries: ['automotive', 'aerospace_defense', 'industrial_automation', 'medical_devices'],
     key_institutions: [
       {
         name: 'CEA-Leti',
