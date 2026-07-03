@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import ComparePage from '../components/ComparePage';
+---
+
+<Base title="Country comparison">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-10">
+    <ComparePage client:only="react" />
+    <noscript>
+      <p class="text-sm text-slate-600">
+        The interactive comparison requires JavaScript. Country pages work without it:
+        <a href="/country/germany" class="underline">Germany</a>,
+        <a href="/country/netherlands" class="underline">Netherlands</a>,
+        <a href="/country/france" class="underline">France</a>.
+      </p>
+    </noscript>
+  </div>
+</Base>

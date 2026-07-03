@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --color-ink: #0f172a;
+  --color-paper: #ffffff;
+  --color-accent: #1e3a8a;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-slate-900 antialiased;
+  font-feature-settings: "tnum" 1; /* tabular numerals for parameter tables */
+}
+
+/* ---------------------------------------------------------------------- */
+/* Print styles: the PDF export is a print-optimized rendering             */
+/* ---------------------------------------------------------------------- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    font-size: 11px;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .print-break-inside-avoid {
+    break-inside: avoid;
+  }
+  .print-url::after {
+    content: " (" attr(href) ")";
+    font-size: 9px;
+    color: #64748b;
+  }
+}
