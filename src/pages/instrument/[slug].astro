@@ -1,0 +1,219 @@
+---
+import Base from '../../layouts/Base.astro';
+import { instruments, getInstrument } from '../../data/instruments';
+import { getCountry } from '../../data/countries';
+import { TypeBadge, StatusBadge, VerificationLine } from '../../components/Badges';
+import {
+  businessModelLabels,
+  formatDate,
+  goalLabels,
+  mechanismHelp,
+  mechanismLabels,
+  sectorLabels,
+} from '../../lib/labels';
+
+export function getStaticPaths() {
+  return instruments.map((i) => ({ params: { slug: i.slug } }));
+}
+
+const { slug } = Astro.params;
+const i = getInstrument(slug!)!;
+const country = getCountry(i.country)!;
+
+const hqLabel: Record<string, string> = {
+  any: 'Any headquarters country',
+  eu_only: 'Applying entity must be established in the EU',
+  eu_plus_associated: 'Applying entity must be established in the EU or an associated country',
+  specific: 'Specific headquarters countries only',
+};
+const sizeLabel: Record<string, string> = {
+  any: 'No size restriction',
+  sme_only: 'SMEs only',
+  sme_and_midcap: 'SMEs and mid-caps (large excluded)',
+  large_excluded: 'Large companies excluded',
+};
+
+const related = i.related.map(getInstrument).filter(Boolean);
+const stacks = i.stacks_with.map(getInstrument).filter(Boolean);
+const conflicts = i.conflicts_with.map(getInstrument).filter(Boolean);
+const sortedChangelog = [...i.changelog].sort((a, b) => b.date.localeCompare(a.date));
+---
+
+<Base title={i.name} description={i.summary}>
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 py-10 space-y-8">
+    <header>
+      <a href={`/country/${country.slug}`} class="text-sm text-blue-800 hover:underline no-print">
+        ← {country.flag_emoji} {country.name}
+      </a>
+      <div class="mt-3 flex flex-wrap items-center gap-2">
+        <TypeBadge type={i.instrument_type} />
+        <StatusBadge status={i.status} />
+      </div>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-900 tracking-tight leading-tight">{i.name}</h1>
+      <p class="mt-3 text-lg text-slate-600 leading-relaxed">{i.summary}</p>
+      <div class="mt-3">
+        <VerificationLine instrument={i} />
+      </div>
+    </header>
+
+    {i.status === 'proposed' && (
+      <div class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+        <strong>Proposed — not yet law.</strong> This entry tracks a legislative proposal.
+        Parameters and eligibility may change before (or if) it is adopted.
+      </div>
+    )}
+    {i.is_absence && (
+      <div class="rounded-lg border border-slate-300 bg-slate-50 p-4 text-sm text-slate-700">
+        <strong>This entry documents the absence of an instrument.</strong> It is shown so that
+        country comparisons are honest about what is <em>not</em> available, not to suggest a benefit.
+      </div>
+    )}
+    {i.needs_verification && (
+      <div class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+        <strong>Parameters pending verification.</strong> {i.needs_verification}
+      </div>
+    )}
+
+    <section>
+      <h2 class="text-lg font-semibold text-slate-900 mb-3">Key parameters</h2>
+      <div class="rounded-lg border border-slate-200 overflow-hidden">
+        <table class="w-full text-sm">
+          <tbody>
+            {i.parameters.map((p, idx) => (
+              <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                <th scope="row" class="text-left align-top px-4 py-2.5 font-medium text-slate-600 w-1/3">{p.label}</th>
+                <td class="px-4 py-2.5 text-slate-900">
+                  <span class="font-medium">{p.value}</span>
+                  {p.notes && <span class="block text-xs text-slate-500 mt-0.5">{p.notes}</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-slate-900 mb-3">Eligibility</h2>
+      <dl class="rounded-lg border border-slate-200 divide-y divide-slate-100 text-sm">
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Headquarters</dt>
+          <dd class="text-slate-900">{hqLabel[i.eligibility.hq_countries]}</dd>
+        </div>
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Local entity</dt>
+          <dd class="text-slate-900">{i.eligibility.requires_local_entity ? 'Required' : 'Not required'}</dd>
+        </div>
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Local R&D substance</dt>
+          <dd class="text-slate-900">{i.eligibility.requires_local_rd_substance ? 'Required' : 'Not required'}</dd>
+        </div>
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Company size</dt>
+          <dd class="text-slate-900">{sizeLabel[i.eligibility.size_restrictions]}</dd>
+        </div>
+        {i.eligibility.revenue_ceiling_meur !== null && (
+          <div class="flex gap-4 px-4 py-2.5">
+            <dt class="w-40 shrink-0 text-slate-500">Revenue relevance</dt>
+            <dd class="text-slate-900">Benefit bounded above €{i.eligibility.revenue_ceiling_meur}M revenue (Pillar Two 15% floor)</dd>
+          </div>
+        )}
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Business models</dt>
+          <dd class="text-slate-900">{i.eligibility.business_models === null ? 'All business models' : i.eligibility.business_models.map((b) => businessModelLabels[b]).join(', ')}</dd>
+        </div>
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Sectors</dt>
+          <dd class="text-slate-900">{i.eligibility.sector_restrictions === null ? 'All sectors' : i.eligibility.sector_restrictions.map((s) => sectorLabels[s]).join(', ')}</dd>
+        </div>
+        <div class="flex gap-4 px-4 py-2.5">
+          <dt class="w-40 shrink-0 text-slate-500">Relevant goals</dt>
+          <dd class="text-slate-900">{i.eligibility.goals.map((g) => goalLabels[g]).join('; ')}</dd>
+        </div>
+      </dl>
+      {i.eligibility.additional_conditions && (
+        <p class="mt-3 text-sm text-slate-600 leading-relaxed">{i.eligibility.additional_conditions}</p>
+      )}
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-slate-900 mb-3">Mechanism &amp; application</h2>
+      <p class="text-sm text-slate-600 mb-2">
+        <span class="font-medium text-slate-900">{mechanismLabels[i.mechanism]}</span> — {mechanismHelp[i.mechanism]}
+      </p>
+      <p class="text-sm text-slate-600 leading-relaxed">{i.application_process}</p>
+      <p class="mt-2 text-sm text-slate-500">Typical timeline: <span class="text-slate-800">{i.typical_timeline}</span></p>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-slate-900 mb-3">Legal basis &amp; sources</h2>
+      <dl class="text-sm space-y-2">
+        <div>
+          <dt class="text-slate-500">Legal basis</dt>
+          <dd class="text-slate-900">{i.legal_basis}</dd>
+        </div>
+        <div>
+          <dt class="text-slate-500">Official source</dt>
+          <dd><a href={i.legal_basis_url} target="_blank" rel="noopener noreferrer" class="text-blue-800 hover:underline break-all print-url">{i.legal_basis_url}</a></dd>
+        </div>
+        <div>
+          <dt class="text-slate-500">Verification source</dt>
+          <dd class="text-slate-900">{i.verification_source}</dd>
+        </div>
+        <div class="flex flex-wrap gap-x-6 gap-y-1 pt-1">
+          <span class="text-xs text-slate-500">Valid from: {formatDate(i.valid_from)}</span>
+          <span class="text-xs text-slate-500">Valid until: {i.valid_until ? formatDate(i.valid_until) : 'No expiry'}</span>
+          <span class="text-xs text-slate-500">Next review: {formatDate(i.next_review_date)}</span>
+        </div>
+      </dl>
+    </section>
+
+    {sortedChangelog.length > 0 && (
+      <section>
+        <h2 class="text-lg font-semibold text-slate-900 mb-3">Changelog</h2>
+        <ol class="space-y-3 border-l-2 border-slate-200 pl-4">
+          {sortedChangelog.map((c) => (
+            <li class="relative">
+              <span class="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-blue-800"></span>
+              <p class="text-xs font-medium text-slate-500">{formatDate(c.date)}</p>
+              <p class="text-sm text-slate-800">{c.change}</p>
+              <p class="text-xs text-slate-400">Source: {c.source}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {(related.length > 0 || stacks.length > 0 || conflicts.length > 0) && (
+      <section class="no-print">
+        <h2 class="text-lg font-semibold text-slate-900 mb-3">Related instruments</h2>
+        <div class="space-y-3 text-sm">
+          {stacks.length > 0 && (
+            <div>
+              <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-1">Can be combined with</p>
+              <ul class="flex flex-wrap gap-2">
+                {stacks.map((r) => <li><a href={`/instrument/${r!.slug}`} class="rounded border border-slate-200 px-2 py-1 hover:bg-slate-50">{r!.name}</a></li>)}
+              </ul>
+            </div>
+          )}
+          {conflicts.length > 0 && (
+            <div>
+              <p class="text-xs font-semibold text-rose-700 uppercase tracking-wide mb-1">Mutually exclusive with</p>
+              <ul class="flex flex-wrap gap-2">
+                {conflicts.map((r) => <li><a href={`/instrument/${r!.slug}`} class="rounded border border-slate-200 px-2 py-1 hover:bg-slate-50">{r!.name}</a></li>)}
+              </ul>
+            </div>
+          )}
+          {related.length > 0 && (
+            <div>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">See also</p>
+              <ul class="flex flex-wrap gap-2">
+                {related.map((r) => <li><a href={`/instrument/${r!.slug}`} class="rounded border border-slate-200 px-2 py-1 hover:bg-slate-50">{r!.name}</a></li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+  </div>
+</Base>
