@@ -19,7 +19,12 @@ import {
 import { defaultProfile, profileToParams } from '../lib/profile';
 import { targetableCountries } from '../data/countries';
 
-const steps = ['Company basics', 'What are you looking for?', 'Target countries'];
+const steps = [
+  'Company basics',
+  'Scale & economics',
+  'What are you looking for?',
+  'Target countries',
+];
 
 function OptionButton({
   selected,
@@ -113,8 +118,14 @@ export default function Wizard() {
     );
   };
 
+  const setNum = (key: 'rdEngineers' | 'rdPersonnelCost' | 'ipSharePct', raw: string) => {
+    const v = raw === '' ? undefined : Number(raw);
+    set(key, Number.isFinite(v as number) ? (v as number) : undefined);
+  };
+
   const step1Valid = profile.sectors.length > 0;
-  const step3Valid = compareAll || profile.targetCountries.length > 0;
+  const lastStep = steps.length - 1;
+  const stepCountriesValid = compareAll || profile.targetCountries.length > 0;
 
   const finish = () => {
     const finalProfile: CompanyProfile = compareAll
@@ -222,6 +233,56 @@ export default function Wizard() {
       )}
 
       {step === 1 && (
+        <div className="space-y-8">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            Optional — fill these in to get a rough <strong>support estimate</strong> per country on
+            your dashboard. Skip to leave the estimate out; everything else works without it.
+          </div>
+          <Field label="Planned R&D engineers at the site">
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              value={profile.rdEngineers ?? ''}
+              onChange={(e) => setNum('rdEngineers', e.target.value)}
+              placeholder="e.g. 25"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white"
+            />
+          </Field>
+          <Field label="Approximate annual R&D personnel cost (€)">
+            <input
+              type="number"
+              min={0}
+              step={10000}
+              inputMode="numeric"
+              value={profile.rdPersonnelCost ?? ''}
+              onChange={(e) => setNum('rdPersonnelCost', e.target.value)}
+              placeholder="e.g. 3000000"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white"
+            />
+            <p className="text-xs text-slate-500 mt-2">
+              Fully loaded. Left blank, we assume €110k per engineer.
+            </p>
+          </Field>
+          <Field label="Share of revenue that is licensable IP income (%)">
+            <input
+              type="number"
+              min={0}
+              max={100}
+              inputMode="numeric"
+              value={profile.ipSharePct ?? ''}
+              onChange={(e) => setNum('ipSharePct', e.target.value)}
+              placeholder="e.g. 20"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white"
+            />
+            <p className="text-xs text-slate-500 mt-2">
+              Used to estimate IP-box savings. Combined with your revenue band midpoint.
+            </p>
+          </Field>
+        </div>
+      )}
+
+      {step === 2 && (
         <div className="space-y-2">
           <Field label="What are you looking for?">
             <div className="grid grid-cols-1 gap-2">
@@ -244,7 +305,7 @@ export default function Wizard() {
         </div>
       )}
 
-      {step === 2 && (
+      {step === 3 && (
         <div className="space-y-6">
           <Field label="Target countries (select one or more)">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -287,7 +348,7 @@ export default function Wizard() {
         >
           Back
         </button>
-        {step < 2 ? (
+        {step < lastStep ? (
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
@@ -300,10 +361,10 @@ export default function Wizard() {
           <button
             type="button"
             onClick={finish}
-            disabled={!step3Valid}
+            disabled={!stepCountriesValid}
             className="rounded-lg bg-blue-900 px-6 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-blue-800"
           >
-            {step3Valid ? 'Show my instruments →' : 'Select at least one country'}
+            {stepCountriesValid ? 'Show my instruments →' : 'Select at least one country'}
           </button>
         )}
       </div>

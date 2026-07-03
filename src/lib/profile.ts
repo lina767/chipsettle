@@ -33,6 +33,10 @@ export function profileToParams(p: CompanyProfile): URLSearchParams {
   params.set('sectors', p.sectors.join(','));
   params.set('goal', p.goal);
   params.set('countries', p.targetCountries.join(','));
+  if (p.rdEngineers != null && p.rdEngineers > 0) params.set('eng', String(p.rdEngineers));
+  if (p.rdPersonnelCost != null && p.rdPersonnelCost > 0)
+    params.set('cost', String(p.rdPersonnelCost));
+  if (p.ipSharePct != null && p.ipSharePct > 0) params.set('ip', String(p.ipSharePct));
   return params;
 }
 
@@ -58,6 +62,10 @@ export function profileFromParams(params: URLSearchParams): CompanyProfile {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
+  const num = (key: string): number | undefined => {
+    const v = Number(params.get(key));
+    return Number.isFinite(v) && v > 0 ? v : undefined;
+  };
   return {
     hqCountry: pick(params.get('hq'), HQ, defaultProfile.hqCountry),
     businessModel: pick(params.get('bm'), BM, defaultProfile.businessModel),
@@ -66,5 +74,8 @@ export function profileFromParams(params: URLSearchParams): CompanyProfile {
     sectors: sectors.length > 0 ? sectors : defaultProfile.sectors,
     goal: pick(params.get('goal'), GOALS, defaultProfile.goal),
     targetCountries: countries, // empty = compare all available
+    rdEngineers: num('eng'),
+    rdPersonnelCost: num('cost'),
+    ipSharePct: num('ip'),
   };
 }

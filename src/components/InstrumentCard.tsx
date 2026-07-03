@@ -8,7 +8,8 @@ import { EligibilityBadge, StatusBadge, TypeBadge, VerificationLine } from './Ba
  * eligibility assessment, legal basis, source link, last verified date.
  */
 export default function InstrumentCard({ result }: { result: InstrumentResult }) {
-  const { instrument: i, eligibility_status, notes } = result;
+  const { instrument: i, eligibility_status, notes, conditional_reason, pillar_two_capped } =
+    result;
   const country = getCountry(i.country);
   const colors = instrumentTypeColors[i.instrument_type];
 
@@ -37,6 +38,32 @@ export default function InstrumentCard({ result }: { result: InstrumentResult })
       </div>
 
       <p className="mt-2 text-sm text-slate-600 leading-relaxed">{i.summary}</p>
+
+      {/* Pillar Two cap — shown directly on the IP-box card */}
+      {pillar_two_capped && (
+        <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900 flex gap-2">
+          <span aria-hidden="true">▲</span>
+          <span>
+            <strong>Pillar Two cap:</strong> your group revenue exceeds €750M, so this IP-box
+            benefit is bounded by the 15% GloBE minimum-tax floor. The saving is the gap between the
+            headline rate and 15%, not the full IP-box rate.
+          </span>
+        </div>
+      )}
+
+      {/* Conditional reason + path to satisfy it */}
+      {eligibility_status === 'conditional' && conditional_reason && (
+        <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
+          <p className="text-slate-700">
+            <strong className="text-slate-900">Conditional:</strong> {conditional_reason.reason}
+          </p>
+          {conditional_reason.path && (
+            <p className="text-slate-600 mt-1">
+              <span className="font-medium text-emerald-700">Path:</span> {conditional_reason.path}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Key parameters */}
       {i.parameters.length > 0 && (

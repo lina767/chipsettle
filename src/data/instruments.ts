@@ -14,6 +14,7 @@ export const instruments: Instrument[] = [
   {
     name: 'Forschungszulage (Research Allowance)',
     slug: 'de-forschungszulage',
+    estimate: { kind: 'rd_credit', rate: 0.25, rateSme: 0.35, capLarge: 3_000_000, capSme: 4_200_000 },
     country: 'germany',
     level: 'national',
     instrument_type: 'rd_tax_credit',
@@ -237,6 +238,7 @@ export const instruments: Instrument[] = [
   {
     name: 'Innovation Box (Innovatiebox)',
     slug: 'nl-innovation-box',
+    estimate: { kind: 'ip_box', effRate: 0.09 },
     country: 'netherlands',
     level: 'national',
     instrument_type: 'ip_box',
@@ -341,6 +343,7 @@ export const instruments: Instrument[] = [
   {
     name: 'WBSO (R&D payroll tax credit)',
     slug: 'nl-wbso',
+    estimate: { kind: 'payroll', rate: 0.12, rough: true },
     country: 'netherlands',
     level: 'national',
     instrument_type: 'payroll_exemption',
@@ -389,6 +392,7 @@ export const instruments: Instrument[] = [
   {
     name: 'Partial withholding tax exemption for R&D personnel',
     slug: 'be-rd-withholding-exemption',
+    estimate: { kind: 'payroll', rate: 0.18, rough: true },
     country: 'belgium',
     level: 'national',
     instrument_type: 'payroll_exemption',
@@ -433,6 +437,7 @@ export const instruments: Instrument[] = [
   {
     name: 'Innovation Income Deduction (Innovatieaftrek)',
     slug: 'be-innovation-income-deduction',
+    estimate: { kind: 'ip_box', effRate: 0.0375, rough: true },
     country: 'belgium',
     level: 'national',
     instrument_type: 'ip_box',
@@ -480,6 +485,7 @@ export const instruments: Instrument[] = [
   {
     name: "Crédit d'Impôt Recherche (CIR)",
     slug: 'fr-cir',
+    estimate: { kind: 'rd_credit', rate: 0.3, rateSme: 0.3, capLarge: 30_000_000, capSme: 30_000_000 },
     country: 'france',
     level: 'national',
     instrument_type: 'rd_tax_credit',
@@ -547,6 +553,7 @@ export const instruments: Instrument[] = [
   {
     name: 'French IP regime (Art. 238 CGI)',
     slug: 'fr-ip-regime',
+    estimate: { kind: 'ip_box', effRate: 0.1, rough: true },
     country: 'france',
     level: 'national',
     instrument_type: 'ip_box',

@@ -233,8 +233,79 @@ export function generateNotes(i: Instrument, profile: CompanyProfile): string[] 
 }
 
 // ---------------------------------------------------------------------------
+// Conditional-eligibility reason (one sentence + path to satisfy it)
+// ---------------------------------------------------------------------------
+
+export function conditionalReason(
+  i: Instrument,
+  profile: CompanyProfile,
+): { reason: string; path?: string } | undefined {
+  if (i.is_absence) {
+    return {
+      reason: 'This documents the absence of an instrument, not a benefit you can claim.',
+    };
+  }
+  if (i.status === 'proposed') {
+    return {
+      reason: 'It is a legislative proposal, not yet law.',
+      path: 'Track the procedure; parameters and eligibility firm up once (and if) it is adopted.',
+    };
+  }
+  if (
+    (i.eligibility.hq_countries === 'eu_only' ||
+      i.eligibility.hq_countries === 'eu_plus_associated') &&
+    profile.hqCountry !== 'eu'
+  ) {
+    return {
+      reason: 'Your group is headquartered outside the EU, and the applicant must be EU-established.',
+      path: 'Your planned European subsidiary becomes the eligible applicant once incorporated.',
+    };
+  }
+  if (
+    i.eligibility.revenue_ceiling_meur !== null &&
+    profile.revenue === 'gt_750m' &&
+    i.instrument_type === 'ip_box'
+  ) {
+    return {
+      reason: 'Above €750M revenue the benefit is bounded by the 15% Pillar Two floor.',
+      path: 'Still worth claiming down to the 15% GloBE minimum; model the residual saving with your advisor.',
+    };
+  }
+  if (i.mechanism === 'discretionary') {
+    return {
+      reason: 'It is a competitive, call-based program — not an automatic entitlement.',
+      path: 'Prepare a proposal (often with an EU partner) and apply within an open call window.',
+    };
+  }
+  if (i.needs_verification) {
+    return {
+      reason: 'Some parameters still need verification against the primary source.',
+      path: 'Confirm the current figures before relying on them.',
+    };
+  }
+  return undefined;
+}
+
+// ---------------------------------------------------------------------------
 // Main entry point
 // ---------------------------------------------------------------------------
+
+function buildResult(i: Instrument, profile: CompanyProfile): InstrumentResult {
+  const status = assessEligibility(i, profile);
+  const pillarCapped =
+    i.instrument_type === 'ip_box' &&
+    i.eligibility.revenue_ceiling_meur !== null &&
+    profile.revenue === 'gt_750m';
+  return {
+    instrument: i,
+    eligibility_status: status,
+    relevance_score: calculateRelevance(i, profile),
+    notes: generateNotes(i, profile),
+    conditional_reason:
+      status === 'conditional' ? conditionalReason(i, profile) : undefined,
+    pillar_two_capped: pillarCapped,
+  };
+}
 
 export function getRelevantInstruments(profile: CompanyProfile): InstrumentResult[] {
   return instruments
@@ -245,13 +316,51 @@ export function getRelevantInstruments(profile: CompanyProfile): InstrumentResul
     .filter((i) => matchesSize(i, profile.companySize, profile.revenue))
     .filter((i) => matchesSector(i, profile.sectors))
     .filter((i) => matchesGoal(i, profile.goal))
-    .map((i) => ({
-      instrument: i,
-      eligibility_status: assessEligibility(i, profile),
-      relevance_score: calculateRelevance(i, profile),
-      notes: generateNotes(i, profile),
-    }))
+    .map((i) => buildResult(i, profile))
     .sort((a, b) => b.relevance_score - a.relevance_score);
+}
+
+/**
+ * Instruments that are in scope for the selected countries but were filtered
+ * out by the profile, each with a one-line reason ("why doesn't this appear?").
+ * Country/goal mismatches inside the selected scope are the meaningful cases.
+ */
+export function getExcludedInstruments(
+  profile: CompanyProfile,
+): { instrument: Instrument; reason: string }[] {
+  const excluded: { instrument: Instrument; reason: string }[] = [];
+  for (const i of instruments) {
+    if (i.status === 'expired') continue;
+    // Only consider instruments in the countries the user is actually looking at.
+    if (!matchesCountry(i, profile.targetCountries)) continue;
+    // Already surfaced in the results — skip.
+    if (
+      matchesHQ(i, profile.hqCountry) &&
+      matchesBusinessModel(i, profile.businessModel) &&
+      matchesSize(i, profile.companySize, profile.revenue) &&
+      matchesSector(i, profile.sectors) &&
+      matchesGoal(i, profile.goal)
+    ) {
+      continue;
+    }
+    let reason = '';
+    if (!matchesSize(i, profile.companySize, profile.revenue)) {
+      reason =
+        i.eligibility.size_restrictions === 'sme_only'
+          ? 'Restricted to SMEs — your company is above the SME size threshold.'
+          : 'Your company size is above this instrument’s eligibility ceiling.';
+    } else if (!matchesGoal(i, profile.goal)) {
+      reason = `Not relevant for your selected goal — this instrument targets other objectives.`;
+    } else if (!matchesBusinessModel(i, profile.businessModel)) {
+      reason = 'Your business model is outside this instrument’s eligible models.';
+    } else if (!matchesSector(i, profile.sectors)) {
+      reason = 'None of your selected sectors fall within this instrument’s sector scope.';
+    } else if (!matchesHQ(i, profile.hqCountry)) {
+      reason = 'Your headquarters country is outside this instrument’s eligible list.';
+    }
+    if (reason) excluded.push({ instrument: i, reason });
+  }
+  return excluded;
 }
 
 /** Results grouped by country slug (EU level under 'eu'), preserving rank order. */

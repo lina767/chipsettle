@@ -159,6 +159,9 @@ export interface Instrument {
   related: string[]; // instrument slugs
   conflicts_with: string[];
   stacks_with: string[];
+
+  /** Optional benefit model used by the support estimate (Rechnung). */
+  estimate?: EstimateModel;
 }
 
 // ---------------------------------------------------------------------------
@@ -215,6 +218,34 @@ export interface CompanyProfile {
   goal: Goal;
   /** country slugs; empty array = compare all available countries */
   targetCountries: string[];
+
+  // --- Optional "rough numbers" for the support estimate (Rechnung) ---
+  /** Planned number of R&D engineers at the site. */
+  rdEngineers?: number;
+  /** Approximate total annual R&D personnel cost, in € (fully loaded). */
+  rdPersonnelCost?: number;
+  /** Share of group revenue that is licensable IP income, in percent. */
+  ipSharePct?: number;
+}
+
+/**
+ * Quantitative benefit model attached to instruments that can be estimated.
+ * All figures are deliberately coarse — the estimate is orientation, not advice.
+ */
+export interface EstimateModel {
+  kind: 'rd_credit' | 'payroll' | 'ip_box';
+  /** rd_credit / payroll: fraction of the R&D personnel base. */
+  rate?: number;
+  /** rd_credit: higher fraction for SMEs. */
+  rateSme?: number;
+  /** rd_credit: annual credit ceiling for large companies (€). */
+  capLarge?: number;
+  /** rd_credit: annual credit ceiling for SMEs (€). */
+  capSme?: number;
+  /** ip_box: effective tax rate on qualifying IP income (fraction). */
+  effRate?: number;
+  /** True when the rate is a rough indicative figure pending verification. */
+  rough?: boolean;
 }
 
 export type EligibilityStatus =
@@ -229,4 +260,69 @@ export interface InstrumentResult {
   relevance_score: number;
   /** Profile-specific notes, e.g. Pillar Two interactions. */
   notes: string[];
+  /** For 'conditional' results: why, and how to satisfy it. */
+  conditional_reason?: { reason: string; path?: string };
+  /** Set on IP boxes when the €750M Pillar Two floor caps the benefit. */
+  pillar_two_capped?: boolean;
+}
+
+/** An instrument that was filtered out, with the profile-based reason. */
+export interface ExcludedInstrument {
+  instrument: Instrument;
+  reason: string;
+}
+
+/** One quantified line inside a country support estimate. */
+export interface EstimateLine {
+  instrument: Instrument;
+  amount: number; // € per year
+  basis: string; // human-readable computation basis
+  rough: boolean;
+}
+
+/** Rough annual support estimate for a single country. */
+export interface CountryEstimate {
+  countrySlug: string;
+  lines: EstimateLine[];
+  total: number; // € per year (quantified, rule-based/hybrid only)
+  effectiveRatePct: number | null; // total as % of R&D personnel base
+  personnelBase: number;
+  ipIncome: number;
+  /** Discretionary programs that add potential funding but are not quantified. */
+  competitiveCount: number;
+}
+
+export interface EcosystemFit {
+  countrySlug: string;
+  /** 0..1 share of the company's sectors covered by the region's clusters. */
+  coverage: number;
+  matches: {
+    ecosystemName: string;
+    city: string;
+    matchedSectors: Sector[];
+  }[];
+  /** Sectors the company selected that no local cluster covers. */
+  unmatchedSectors: Sector[];
+}
+
+export type RoadmapPhaseId =
+  | 'establish'
+  | 'staff'
+  | 'certify_claim'
+  | 'competitive'
+  | 'monitor';
+
+export interface RoadmapStep {
+  title: string;
+  detail: string;
+  timeline: string;
+  href?: string;
+  kind: 'legal_step' | 'instrument';
+}
+
+export interface RoadmapPhase {
+  id: RoadmapPhaseId;
+  title: string;
+  summary: string;
+  steps: RoadmapStep[];
 }

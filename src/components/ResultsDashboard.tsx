@@ -1,11 +1,21 @@
 import { useMemo } from 'react';
 import type { CompanyProfile } from '../lib/types';
-import { getRelevantInstruments, groupResultsByCountry } from '../lib/engine';
+import {
+  getExcludedInstruments,
+  getRelevantInstruments,
+  groupResultsByCountry,
+} from '../lib/engine';
 import { profileFromParams } from '../lib/profile';
 import { getCountry, seededCountrySlugs } from '../data/countries';
 import ProfileSummary from './ProfileSummary';
 import ComparisonTable from './ComparisonTable';
 import InstrumentCard from './InstrumentCard';
+import {
+  EcosystemFitView,
+  EstimatePanel,
+  ExcludedInstruments,
+  RoadmapView,
+} from './AnalysisSections';
 
 /**
  * Personalized instrument dashboard. The profile is read from URL query
@@ -19,6 +29,7 @@ export default function ResultsDashboard() {
   );
 
   const results = useMemo(() => getRelevantInstruments(profile), [profile]);
+  const excluded = useMemo(() => getExcludedInstruments(profile), [profile]);
   const targetSlugs =
     profile.targetCountries.length > 0 ? profile.targetCountries : seededCountrySlugs;
   const grouped = groupResultsByCountry(results);
@@ -59,6 +70,18 @@ export default function ResultsDashboard() {
         </div>
       ) : (
         <>
+          {/* 1. Support estimate (Rechnung) */}
+          <section>
+            <h2 className="text-lg font-semibold text-slate-900 mb-1">
+              Rough support estimate
+            </h2>
+            <p className="text-sm text-slate-500 mb-4">
+              Estimated annual public support per country for your profile — an orientation figure
+              with visible assumptions, not tax advice.
+            </p>
+            <EstimatePanel profile={profile} results={results} countrySlugs={targetSlugs} />
+          </section>
+
           {targetSlugs.length >= 2 && (
             <section>
               <h2 className="text-lg font-semibold text-slate-900 mb-1">
@@ -80,23 +103,45 @@ export default function ResultsDashboard() {
           {groupOrder.map((slug) => {
             const country = getCountry(slug);
             const items = grouped.get(slug)!;
+            const isEU = slug === 'eu';
             return (
-              <section key={slug}>
-                <h2 className="text-lg font-semibold text-slate-900 mb-3 flex items-center gap-2">
+              <section key={slug} className="space-y-4">
+                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                   <span aria-hidden="true">{country?.flag_emoji}</span>
-                  {slug === 'eu' ? 'EU-level instruments' : country?.name}
+                  {isEU ? 'EU-level instruments' : country?.name}
                   <span className="text-sm font-normal text-slate-400">
                     {items.length} instrument{items.length === 1 ? '' : 's'}
                   </span>
                 </h2>
+
+                {!isEU && <EcosystemFitView profile={profile} countrySlug={slug} />}
+
                 <div className="space-y-3">
                   {items.map((r) => (
                     <InstrumentCard key={r.instrument.slug} result={r} />
                   ))}
                 </div>
+
+                {!isEU && (
+                  <details className="rounded-lg border border-slate-200 bg-white group">
+                    <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-800 flex items-center justify-between">
+                      <span>Action roadmap for {country?.name}</span>
+                      <span className="text-slate-400 text-xs group-open:hidden">Show sequence</span>
+                      <span className="text-slate-400 text-xs hidden group-open:inline">Hide</span>
+                    </summary>
+                    <div className="border-t border-slate-100 p-4">
+                      <RoadmapView profile={profile} results={results} countrySlug={slug} />
+                    </div>
+                  </details>
+                )}
               </section>
             );
           })}
+
+          {/* 6. Excluded instruments ("why doesn't this appear?") */}
+          <section>
+            <ExcludedInstruments excluded={excluded} />
+          </section>
         </>
       )}
 
