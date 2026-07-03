@@ -36,12 +36,9 @@ export function EstimatePanel({
 }) {
   if (!hasEstimateInputs(profile)) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
-        Add your planned R&D headcount or personnel cost in the wizard to see a rough{' '}
-        <strong>support estimate</strong> per country here.{' '}
-        <a href="/wizard" className="text-blue-800 underline">
-          Add numbers ↺
-        </a>
+      <div className="rounded-lg border hairline bg-slate-50 p-5 text-sm text-slate-600">
+        📊 Add R&D headcount or cost in the wizard for a rough per-country estimate.{' '}
+        <a href="/wizard" className="text-blue-800 underline">Add numbers ↺</a>
       </div>
     );
   }
@@ -66,24 +63,24 @@ export function EstimatePanel({
           return (
             <div
               key={e.countrySlug}
-              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm print-break-inside-avoid"
+              className="rounded-lg border hairline bg-white p-4 shadow-sm print-break-inside-avoid"
             >
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-slate-900">
+                <h3 className="font-semibold text-slate-900 text-sm">
                   <span aria-hidden="true">{country?.flag_emoji}</span> {country?.name}
                 </h3>
                 {e.effectiveRatePct !== null && (
                   <span
-                    className="text-xs text-slate-500"
+                    className="mono text-[11px] text-slate-500"
                     title="Total estimated support as a share of your R&D personnel cost plus assumed IP income"
                   >
-                    ≈{e.effectiveRatePct.toFixed(1)}% effective
+                    ≈{e.effectiveRatePct.toFixed(1)}%
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-2xl font-semibold text-slate-900 tabular-nums">
+              <p className="mt-1 mono text-2xl font-semibold text-slate-900">
                 {eur(e.total)}
-                <span className="text-sm font-normal text-slate-400"> / year est.</span>
+                <span className="text-xs font-normal text-slate-400"> /yr est.</span>
               </p>
               <ul className="mt-3 space-y-1.5">
                 {e.lines.map((l) => (
@@ -93,7 +90,7 @@ export function EstimatePanel({
                         {l.instrument.name.replace(/\s*\(.*?\)\s*/g, ' ').trim()}
                         {l.rough && <span className="text-amber-600"> *</span>}
                       </span>
-                      <span className="text-slate-900 tabular-nums font-semibold shrink-0">
+                      <span className="mono text-slate-900 font-semibold shrink-0">
                         {eur(l.amount)}
                       </span>
                     </div>
@@ -102,9 +99,8 @@ export function EstimatePanel({
                 ))}
               </ul>
               {e.competitiveCount > 0 && (
-                <p className="mt-2 text-xs text-emerald-700">
-                  + {e.competitiveCount} competitive grant program
-                  {e.competitiveCount === 1 ? '' : 's'} (not quantified — outcome uncertain)
+                <p className="mt-2 label-mono text-emerald-700">
+                  + {e.competitiveCount} competitive grant{e.competitiveCount === 1 ? '' : 's'} (not quantified)
                 </p>
               )}
             </div>
@@ -113,34 +109,21 @@ export function EstimatePanel({
       </div>
 
       {/* Assumptions — visible and auditable */}
-      <details className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
-        <summary className="cursor-pointer font-medium text-slate-800">
-          Assumptions behind these figures
-        </summary>
-        <ul className="mt-2 space-y-1 list-disc pl-5">
-          <li>
-            R&D personnel base:{' '}
-            {profile.rdPersonnelCost
+      <details className="rounded-lg border hairline bg-slate-50 px-4 py-3 text-xs text-slate-600">
+        <summary className="cursor-pointer label-mono text-slate-700">⚙ Assumptions</summary>
+        <ul className="mt-2 space-y-1">
+          <li>→ R&D base: <span className="mono">{profile.rdPersonnelCost
               ? `${eur(profile.rdPersonnelCost)} (your figure)`
-              : `${profile.rdEngineers} engineers × €${(DEFAULT_COST_PER_ENGINEER_EUR / 1000).toFixed(0)}k assumed`}
-            .
-          </li>
-          <li>
-            IP income:{' '}
-            {profile.ipSharePct
-              ? `${profile.ipSharePct}% of your revenue-band midpoint (${eur(REVENUE_MIDPOINT_EUR[profile.revenue])})`
-              : 'not provided — IP-box savings excluded'}
-            .
-          </li>
-          <li>R&D tax credits applied to the personnel base at their headline/SME rate, subject to annual caps.</li>
-          <li>Payroll instruments (marked *) use indicative effective rates — verify against the source.</li>
-          <li>IP-box savings = (headline corporate rate − IP-box rate) × IP income; floored at 15% above €750M revenue (Pillar Two).</li>
-          <li>Discretionary grants are listed but not added to the figure — approval is competitive and uncertain.</li>
+              : `${profile.rdEngineers} eng. × €${(DEFAULT_COST_PER_ENGINEER_EUR / 1000).toFixed(0)}k`}</span></li>
+          <li>→ IP income: <span className="mono">{profile.ipSharePct
+              ? `${profile.ipSharePct}% of ${eur(REVENUE_MIDPOINT_EUR[profile.revenue])} rev. midpoint`
+              : 'not provided → IP-box savings excluded'}</span></li>
+          <li>→ R&D credits at headline/SME rate, capped annually</li>
+          <li>→ Payroll figures (*) are indicative — verify against source</li>
+          <li>→ IP-box saving = (headline − IP rate) × IP income; floored at 15% above €750M (Pillar Two)</li>
+          <li>→ Discretionary grants listed, not added — outcome uncertain</li>
         </ul>
-        <p className="mt-2 font-medium text-slate-700">
-          This is a rough orientation estimate, not a computation of your tax position, and does not
-          replace tax advice.
-        </p>
+        <p className="mt-2 font-medium text-slate-700">⚠ Orientation only — not a tax computation.</p>
       </details>
     </div>
   );
@@ -166,17 +149,15 @@ export function RoadmapView({
   return (
     <div>
       <p className="text-sm text-slate-500 mb-4">
-        A suggested sequence for <span aria-hidden="true">{country?.flag_emoji}</span>{' '}
-        {country?.name} — legal steps and instruments merged into the order you would actually
-        tackle them.
+        🧭 Suggested sequence for {country?.flag_emoji} {country?.name}.
       </p>
       <ol className="relative border-l-2 border-slate-200 ml-3 space-y-6">
         {phases.map((ph, idx) => (
           <li key={ph.id} className="ml-6 print-break-inside-avoid">
-            <span className="absolute -left-[13px] flex items-center justify-center w-6 h-6 rounded-full bg-blue-900 text-white text-xs font-semibold">
+            <span className="absolute -left-[13px] flex items-center justify-center w-6 h-6 rounded-full bg-blue-900 text-white mono text-[11px] font-semibold">
               {idx + 1}
             </span>
-            <h3 className="font-semibold text-slate-900">{ph.title}</h3>
+            <h3 className="font-semibold text-slate-900 text-sm">{ph.title}</h3>
             <p className="text-xs text-slate-500 mb-2">{ph.summary}</p>
             <ul className="space-y-1.5">
               {ph.steps.map((s, si) => (
@@ -194,7 +175,7 @@ export function RoadmapView({
                   ) : (
                     <span className="font-medium">{s.title}</span>
                   )}
-                  {s.timeline && <span className="text-xs text-slate-400">· {s.timeline}</span>}
+                  {s.timeline && <span className="mono text-[11px] text-slate-400">· {s.timeline}</span>}
                   <span className="basis-full pl-3.5 text-xs text-slate-500">{s.detail}</span>
                 </li>
               ))}
@@ -238,11 +219,11 @@ export function EcosystemFitView({
   };
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 print-break-inside-avoid">
+    <div className="rounded-lg border hairline bg-white p-4 print-break-inside-avoid">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-slate-900 text-sm">Ecosystem fit for your sectors &amp; industries</h3>
-        <span className={`text-xs font-semibold ${bandColor}`}>
-          {pct}% coverage · {band}
+        <h3 className="font-semibold text-slate-900 text-sm">🗺 Ecosystem fit</h3>
+        <span className={`mono text-xs font-semibold ${bandColor}`}>
+          {pct}% · {band}
         </span>
       </div>
       {fit.matches.length > 0 ? (
@@ -277,11 +258,11 @@ export function EcosystemFitView({
 export function ExcludedInstruments({ excluded }: { excluded: ExcludedInstrument[] }) {
   if (excluded.length === 0) return null;
   return (
-    <details className="rounded-lg border border-slate-200 bg-white group">
+    <details className="rounded-lg border hairline bg-white group">
       <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-800 flex items-center justify-between">
-        <span>Excluded instruments and why ({excluded.length})</span>
-        <span className="text-slate-400 text-xs group-open:hidden">Show</span>
-        <span className="text-slate-400 text-xs hidden group-open:inline">Hide</span>
+        <span>🚫 Excluded &amp; why <span className="mono text-slate-400">({excluded.length})</span></span>
+        <span className="label-mono text-slate-400 group-open:hidden">Show</span>
+        <span className="label-mono text-slate-400 hidden group-open:inline">Hide</span>
       </summary>
       <ul className="border-t border-slate-100 divide-y divide-slate-100">
         {excluded.map(({ instrument: i, reason }) => {

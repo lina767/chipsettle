@@ -9,128 +9,113 @@ const countryCount = seededCountrySlugs.length;
 
 // Timeline: recent and upcoming changes across the database (datedness as design element)
 const timeline = [
-  { date: '2027-01-01', label: 'NL expat ruling drops from 30% to 27% tax-free', country: 'netherlands', upcoming: true },
-  { date: '2026-12-31', label: 'DE Forschungszulage set to expire (extension possible, not enacted)', country: 'germany', upcoming: true },
-  { date: '2026-06-03', label: 'EU Chips Act 2.0 proposal published — design in FOAK scope (PROPOSED)', country: 'eu', upcoming: false },
-  { date: '2026-01-01', label: 'DE Forschungszulage base cap raised to €12M + 20% overhead flat rate', country: 'germany', upcoming: false },
-  { date: '2025-02-15', label: 'FR CIR base narrowed by LF2025 (operating cost rate 43% → 40%)', country: 'france', upcoming: false },
+  { date: '2027-01-01', label: 'NL expat ruling: tax-free share 30% → 27%', country: 'netherlands', upcoming: true },
+  { date: '2026-01-01', label: 'DE Forschungszulage: base cap → €12M + 20% overhead flat rate', country: 'germany', upcoming: false },
+  { date: '2026-01-01', label: 'NL WBSO: first bracket → €391,020 (rates 36% / 16%)', country: 'netherlands', upcoming: false },
+  { date: '2025-02-28', label: 'FR JEI: R&D-spend threshold raised 15% → 20%', country: 'france', upcoming: false },
+  { date: '2025-02-15', label: 'FR CIR: base narrowed (operating-cost rate 43% → 40%)', country: 'france', upcoming: false },
+  { date: '2025-01-01', label: 'BE inbound-taxpayer regime: allowance 30% → 35%, cap dropped', country: 'belgium', upcoming: false },
 ].sort((a, b) => b.date.localeCompare(a.date));
+
+const steps = [
+  { n: '01', h: 'Describe your company', items: ['HQ, business model, size, revenue', 'Sectors + end-market industries', 'Goal: design site · R&D · IP · pilot lines'] },
+  { n: '02', h: 'Get your dashboard', items: ['Deterministic engine, not a chatbot', 'Filtered to your profile', 'Eligibility + relevance per instrument'] },
+  { n: '03', h: 'Compare & act', items: ['Side-by-side across countries', 'Support estimate + action roadmap', 'Export PDF for your board'] },
+];
 ---
 
 <Base title="Home" description="ChipSettle helps semiconductor companies identify which fiscal instruments, funding programs, and legal requirements apply when establishing a design site in Europe.">
   <section class="mx-auto max-w-6xl px-4 sm:px-6 pt-16 pb-12">
     <div class="max-w-3xl">
-      <p class="text-sm font-medium text-blue-900 mb-3 uppercase tracking-wide">
-        Semiconductor Design Settlement Navigator
-      </p>
-      <h1 class="text-3xl sm:text-5xl font-semibold text-slate-900 tracking-tight leading-tight">
-        The full policy picture for your European design site — in one place.
+      <p class="eyebrow mb-4">Semiconductor design settlement navigator</p>
+      <h1 class="text-4xl sm:text-6xl text-slate-900 leading-[1.02]">
+        Every European chip-design incentive. One filtered view.
       </h1>
-      <p class="mt-5 text-lg text-slate-600 leading-relaxed">
-        Fiscal instruments, funding programs, visa pathways, and legal requirements for
-        semiconductor design settlement are scattered across national tax codes, EU regulations,
-        and program websites that don't reference each other. ChipSettle assembles them into
-        one verified, dated, source-linked picture — filtered to your company's profile.
+      <p class="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl">
+        Fiscal instruments, funding, visa pathways and legal steps are scattered across tax codes,
+        EU regulations and program sites that don't reference each other. ChipSettle assembles them
+        — <strong>verified, dated, source-linked</strong> — and filters them to your profile.
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
-        <a
-          href="/wizard"
-          class="rounded-lg bg-blue-900 px-6 py-3 text-sm font-medium text-white hover:bg-blue-800"
-        >
-          Start the 3-minute wizard →
+        <a href="/wizard" class="rounded-lg bg-blue-900 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-800 transition-colors">
+          Start the 3-min wizard →
         </a>
-        <a
-          href="/compare"
-          class="rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          Compare countries directly
+        <a href="/compare" class="rounded-lg border hairline bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+          Compare countries
         </a>
       </div>
-      <p class="mt-6 text-sm text-slate-500">
-        {activeCount} verified instruments · {countryCount} countries + EU level · every entry
-        with legal basis, source link, and verification date · no AI-generated answers
-      </p>
+      <div class="mt-8 flex flex-wrap gap-x-6 gap-y-2 mono text-xs text-slate-500">
+        <span><span class="text-blue-900 font-semibold">{activeCount}</span> verified instruments</span>
+        <span><span class="text-blue-900 font-semibold">{countryCount}</span> countries + EU</span>
+        <span>legal basis + source on every entry</span>
+        <span>no AI-generated answers</span>
+      </div>
     </div>
   </section>
 
-  <section class="border-y border-slate-200 bg-slate-50">
+  <section class="border-y hairline bg-white">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div>
-        <h2 class="text-sm font-semibold text-slate-900 mb-2">1 · Describe your company</h2>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          HQ country, business model, size, revenue, sectors — and what you're looking for:
-          a design site, R&amp;D cooperation, pilot-line access, or IP domiciliation.
-        </p>
-      </div>
-      <div>
-        <h2 class="text-sm font-semibold text-slate-900 mb-2">2 · Get your instrument dashboard</h2>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          A deterministic decision engine — a filter over a verified database, not a chatbot —
-          returns the instruments that apply to your profile, with eligibility assessments.
-        </p>
-      </div>
-      <div>
-        <h2 class="text-sm font-semibold text-slate-900 mb-2">3 · Compare countries side by side</h2>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          Germany vs. Netherlands vs. France for <em>your</em> profile: R&amp;D credits, IP boxes,
-          payroll instruments, expat rulings — each with legal basis and verification date.
-          Export as PDF for your board.
-        </p>
-      </div>
+      {steps.map((s) => (
+        <div>
+          <div class="flex items-baseline gap-2 mb-3">
+            <span class="mono text-sm text-blue-900 font-semibold">{s.n}</span>
+            <h2 class="text-base text-slate-900">{s.h}</h2>
+          </div>
+          <ul class="space-y-1.5">
+            {s.items.map((it) => (
+              <li class="flex gap-2 text-sm text-slate-600">
+                <span class="text-blue-900/50" aria-hidden="true">→</span>
+                {it}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
     <div>
-      <h2 class="text-xl font-semibold text-slate-900 mb-4">Coverage</h2>
-      <ul class="space-y-2.5">
+      <h2 class="text-lg text-slate-900 mb-4 tick">Coverage</h2>
+      <ul class="divide-y hairline border-y hairline">
         {countries.filter((c) => c.slug !== 'eu').map((c) => {
           const seeded = seededCountrySlugs.includes(c.slug);
           return (
-            <li class="flex items-center justify-between text-sm border-b border-slate-100 pb-2.5">
-              <a href={`/country/${c.slug}`} class="text-slate-800 hover:text-blue-900 font-medium">
+            <li class="flex items-center justify-between py-2.5">
+              <a href={`/country/${c.slug}`} class="text-sm text-slate-800 hover:text-blue-900 font-medium">
                 {c.flag_emoji} {c.name}
               </a>
-              <span class={seeded ? 'text-emerald-700 text-xs' : 'text-slate-400 text-xs'}>
-                {seeded ? 'Instruments verified' : 'Coverage planned'}
+              <span class={`label-mono ${seeded ? 'text-emerald-700' : 'text-slate-400'}`}>
+                {seeded ? '✓ verified' : 'planned'}
               </span>
             </li>
           );
         })}
-        <li class="flex items-center justify-between text-sm pb-1">
-          <a href="/country/eu" class="text-slate-800 hover:text-blue-900 font-medium">
-            🇪🇺 EU level
-          </a>
-          <span class="text-emerald-700 text-xs">Instruments verified</span>
+        <li class="flex items-center justify-between py-2.5">
+          <a href="/country/eu" class="text-sm text-slate-800 hover:text-blue-900 font-medium">🇪🇺 EU level</a>
+          <span class="label-mono text-emerald-700">✓ verified</span>
         </li>
       </ul>
     </div>
     <div>
-      <h2 class="text-xl font-semibold text-slate-900 mb-4">Recent &amp; upcoming changes</h2>
-      <ol class="space-y-3">
+      <h2 class="text-lg text-slate-900 mb-4 tick">Recent &amp; upcoming changes</h2>
+      <ol class="space-y-2.5">
         {timeline.map((t) => {
           const c = getCountry(t.country);
           return (
-            <li class="flex gap-3 text-sm">
-              <span class={`shrink-0 w-24 text-xs pt-0.5 font-medium ${t.upcoming ? 'text-amber-700' : 'text-slate-400'}`}>
+            <li class="flex gap-3 text-sm items-baseline">
+              <span class={`mono shrink-0 w-[92px] text-[11px] ${t.upcoming ? 'text-amber-700 font-semibold' : 'text-slate-400'}`}>
                 {formatDate(t.date)}
               </span>
               <span class="text-slate-700 leading-snug">
-                <span class="mr-1">{c?.flag_emoji}</span>
-                {t.label}
-                {t.upcoming && (
-                  <span class="ml-1.5 inline-flex rounded bg-amber-100 text-amber-900 px-1.5 py-px text-[10px] font-semibold uppercase">
-                    Upcoming
-                  </span>
-                )}
+                <span class="mr-1">{c?.flag_emoji}</span>{t.label}
+                {t.upcoming && <span class="ml-1.5 label-mono text-amber-700">upcoming</span>}
               </span>
             </li>
           );
         })}
       </ol>
-      <a href="/changelog" class="mt-4 inline-block text-sm text-blue-800 hover:underline">
-        Full changelog →
-      </a>
+      <a href="/changelog" class="mt-4 inline-block text-sm text-blue-800 hover:underline">Full changelog →</a>
     </div>
   </section>
 </Base>

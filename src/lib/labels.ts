@@ -83,6 +83,7 @@ export const industryLabels: Record<Industry, string> = {
   telecom_5g: 'Telecom / 5G',
   data_center_hpc: 'Data center / HPC',
   medical_devices: 'Medical devices',
+  biotech: 'Biotech',
   energy_grid: 'Energy & grid',
   other: 'Other',
 };

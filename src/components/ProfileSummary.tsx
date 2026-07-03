@@ -48,7 +48,7 @@ export default function ProfileSummary({ profile }: { profile: CompanyProfile })
         {chips.map((c) => (
           <span
             key={c}
-            className="rounded-full bg-white border border-slate-200 px-2.5 py-0.5 text-xs text-slate-600"
+            className="rounded bg-slate-50 border hairline px-2 py-0.5 text-[11px] text-slate-600"
           >
             {c}
           </span>

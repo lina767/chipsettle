@@ -30,41 +30,36 @@ const isEU = slug === 'eu';
     <header>
       <a href="/" class="text-sm text-blue-800 hover:underline no-print">← All countries</a>
       <div class="mt-3 flex items-baseline gap-3 flex-wrap">
-        <h1 class="text-3xl font-semibold text-slate-900 tracking-tight">
+        <h1 class="text-3xl text-slate-900">
           <span aria-hidden="true">{country.flag_emoji}</span> {country.name}
         </h1>
         {country.general_corporate_tax_rate !== null && (
-          <span class="text-sm text-slate-500">
-            Corporate income tax ~{country.general_corporate_tax_rate}%
-          </span>
+          <span class="mono text-sm text-slate-500">CIT ~{country.general_corporate_tax_rate}%</span>
         )}
         {country.pillar_two_implemented && (
-          <span class="rounded border border-slate-300 bg-slate-50 px-2 py-0.5 text-xs text-slate-600">
-            Pillar Two implemented
-          </span>
+          <span class="label-mono rounded border hairline bg-slate-50 px-2 py-0.5 text-slate-600">Pillar Two ✓</span>
         )}
       </div>
-      <p class="mt-4 text-slate-600 leading-relaxed max-w-3xl">{country.notes}</p>
-      <p class="mt-2 text-xs text-slate-400">Country profile verified: {formatDate(country.last_verified)}</p>
+      <p class="mt-4 text-slate-600 leading-relaxed max-w-3xl text-sm">{country.notes}</p>
+      <p class="mt-2 mono text-xs text-slate-400">✓ {formatDate(country.last_verified)}</p>
     </header>
 
     <section>
-      <h2 class="text-xl font-semibold text-slate-900 mb-4">
-        Instruments <span class="text-sm font-normal text-slate-400">({instruments.length})</span>
+      <h2 class="text-xl text-slate-900 mb-4 tick">
+        Instruments <span class="mono text-sm font-normal text-slate-400">({instruments.length})</span>
       </h2>
       {instruments.length === 0 ? (
-        <p class="text-sm text-slate-500 rounded-lg border border-slate-200 bg-slate-50 p-6">
-          No instruments have been seeded for {country.name} yet. See the
-          <a href="/methodology" class="text-blue-800 underline">methodology page</a> for coverage notes.
+        <p class="text-sm text-slate-500 rounded-lg border hairline bg-slate-50 p-6">
+          None seeded for {country.name} yet — see <a href="/methodology" class="text-blue-800 underline">methodology</a>.
         </p>
       ) : (
         <div class="space-y-3">
           {instruments.map((i) => (
-            <article class={`rounded-lg border border-slate-200 bg-white p-4 sm:p-5 print-break-inside-avoid ${i.is_absence ? 'bg-slate-50' : ''}`}>
+            <article class={`rounded-lg border hairline bg-white p-4 sm:p-5 print-break-inside-avoid ${i.is_absence ? 'bg-slate-50' : ''}`}>
               <div class="flex flex-wrap items-center gap-2 mb-1">
                 <TypeBadge type={i.instrument_type} />
                 <StatusBadge status={i.status} />
-                <span class="text-xs text-slate-400">{mechanismLabels[i.mechanism]}</span>
+                <span class="label-mono text-slate-400">{mechanismLabels[i.mechanism]}</span>
               </div>
               <h3 class="text-base font-semibold text-slate-900">
                 <a href={`/instrument/${i.slug}`} class="hover:text-blue-900 hover:underline">{i.name}</a>
@@ -74,8 +69,8 @@ const isEU = slug === 'eu';
                 <dl class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
                   {i.parameters.slice(0, 4).map((p) => (
                     <div class="flex gap-2 items-baseline">
-                      <dt class="text-slate-500 shrink-0">{p.label}:</dt>
-                      <dd class="font-medium text-slate-900">{p.value}</dd>
+                      <dt class="label-mono text-slate-400 shrink-0 pt-0.5">{p.label}</dt>
+                      <dd class="mono text-[12.5px] font-medium text-slate-900">{p.value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -91,22 +86,23 @@ const isEU = slug === 'eu';
 
     {ecosystems.length > 0 && (
       <section>
-        <h2 class="text-xl font-semibold text-slate-900 mb-4">Design ecosystems</h2>
+        <h2 class="text-xl text-slate-900 mb-4 tick">Ecosystems</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {ecosystems.map((e) => (
-            <article class="rounded-lg border border-slate-200 bg-white p-4">
-              <h3 class="font-semibold text-slate-900">{e.name}</h3>
-              <p class="text-xs text-slate-500">{e.city}, {e.region}</p>
+            <article class="rounded-lg border hairline bg-white p-4">
+              <h3 class="font-semibold text-slate-900 text-sm">{e.name}</h3>
+              <p class="mono text-[11px] text-slate-500">{e.city}, {e.region}</p>
               <div class="mt-2 flex flex-wrap gap-1.5">
                 {e.strengths.map((s) => (
-                  <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">{sectorLabels[s]}</span>
+                  <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-600">{sectorLabels[s]}</span>
                 ))}
               </div>
               <p class="mt-2 text-sm text-slate-600 leading-relaxed">{e.notes}</p>
               <ul class="mt-2 space-y-1">
                 {e.key_institutions.map((inst) => (
-                  <li class="text-xs text-slate-600">
-                    <span class="font-medium text-slate-800">{inst.name}</span> — {inst.relevance}
+                  <li class="text-xs text-slate-600 flex gap-1.5">
+                    <span class="text-blue-900/50" aria-hidden="true">→</span>
+                    <span><span class="font-medium text-slate-800">{inst.name}</span> — {inst.relevance}</span>
                   </li>
                 ))}
               </ul>
@@ -118,36 +114,34 @@ const isEU = slug === 'eu';
 
     {steps.length > 0 && (
       <section>
-        <h2 class="text-xl font-semibold text-slate-900 mb-4">Practical steps to establish a presence</h2>
+        <h2 class="text-xl text-slate-900 mb-4 tick">Establishing a presence</h2>
         {steps.some((s) => s.entity_kind) && (
-          <p class="text-sm text-slate-600 leading-relaxed mb-4">
-            A local design site does not always require forming a new legal entity. Below are up to
-            three entity paths — a full subsidiary, a branch office, or an Employer of Record — each
-            with different trade-offs for liability, speed, and which fiscal instruments you can claim.
-            See each instrument's <em>local presence</em> field for which path it accepts.
+          <p class="text-sm text-slate-500 mb-4">
+            ⚙ No single required path — GmbH/BV, branch office, or Employer of Record. See each
+            instrument's <em>local presence</em> field for which one it accepts.
           </p>
         )}
         <div class="space-y-3">
           {steps.map((s) => (
-            <article class="rounded-lg border border-slate-200 bg-white p-4">
+            <article class="rounded-lg border hairline bg-white p-4">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <span class="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">{legalStepTypeLabels[s.step_type]}</span>
+                  <span class="label-mono rounded bg-slate-100 px-1.5 py-0.5 text-slate-600">{legalStepTypeLabels[s.step_type]}</span>
                   {s.entity_kind && (
-                    <span class="ml-1.5 rounded bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 text-xs font-medium">{entityKindLabels[s.entity_kind]}</span>
+                    <span class="ml-1.5 label-mono rounded bg-blue-50 text-blue-800 border border-blue-200 px-1.5 py-0.5">{entityKindLabels[s.entity_kind]}</span>
                   )}
-                  <h3 class="mt-1.5 font-semibold text-slate-900">{s.title}</h3>
+                  <h3 class="mt-1.5 font-semibold text-slate-900 text-sm">{s.title}</h3>
                 </div>
-                <span class="text-xs text-slate-500">{s.typical_timeline}</span>
+                <span class="mono text-xs text-slate-500">{s.typical_timeline}</span>
               </div>
               <p class="mt-2 text-sm text-slate-600 leading-relaxed">{s.description}</p>
               <dl class="mt-2 text-xs text-slate-600 space-y-1">
-                <div><dt class="inline font-medium text-slate-700">Requirements: </dt><dd class="inline">{s.requirements}</dd></div>
-                <div><dt class="inline font-medium text-slate-700">Costs: </dt><dd class="inline">{s.costs}</dd></div>
+                <div class="flex gap-2"><dt class="label-mono text-slate-400 shrink-0">Requires</dt><dd>{s.requirements}</dd></div>
+                <div class="flex gap-2"><dt class="label-mono text-slate-400 shrink-0">Cost</dt><dd class="mono">{s.costs}</dd></div>
               </dl>
               <div class="mt-2 flex items-center justify-between">
-                <a href={s.source_url} target="_blank" rel="noopener noreferrer" class="text-xs text-blue-800 hover:underline print-url">Official source ↗</a>
-                <span class="text-xs text-slate-400">Verified: {formatDate(s.last_verified)}</span>
+                <a href={s.source_url} target="_blank" rel="noopener noreferrer" class="text-xs text-blue-800 hover:underline print-url">Source ↗</a>
+                <span class="mono text-xs text-slate-400">✓ {formatDate(s.last_verified)}</span>
               </div>
             </article>
           ))}
@@ -156,9 +150,9 @@ const isEU = slug === 'eu';
     )}
 
     {!isEU && (
-      <section class="rounded-lg border border-slate-200 bg-slate-50 p-5 no-print">
-        <h2 class="font-semibold text-slate-900">Compare {country.name} with other countries</h2>
-        <p class="mt-1 text-sm text-slate-600">See a side-by-side comparison tailored to your company's profile.</p>
+      <section class="rounded-lg border hairline bg-slate-50 p-5 no-print">
+        <h2 class="font-semibold text-slate-900 text-sm">Compare {country.name}</h2>
+        <p class="mt-1 text-sm text-slate-600">Side-by-side, tailored to your profile.</p>
         <a href="/wizard" class="mt-3 inline-block rounded-lg bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800">Run the wizard →</a>
       </section>
     )}

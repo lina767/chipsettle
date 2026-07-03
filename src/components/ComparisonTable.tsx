@@ -62,7 +62,7 @@ export default function ComparisonTable({
                     {slug === 'eu' ? 'EU level' : c?.name ?? slug}
                   </a>
                   {c && c.general_corporate_tax_rate !== null && (
-                    <span className="block text-xs font-normal text-slate-400">
+                    <span className="block mono text-[11px] font-normal text-slate-400">
                       CIT ~{c.general_corporate_tax_rate}%
                     </span>
                   )}
@@ -104,13 +104,12 @@ export default function ComparisonTable({
                               {r.instrument.name}
                             </a>
                             {r.instrument.parameters[0] && (
-                              <span className="block text-xs text-slate-500 mt-0.5">
-                                {r.instrument.parameters[0].label}:{' '}
+                              <span className="block mono text-[11px] text-slate-500 mt-0.5">
                                 {r.instrument.parameters[0].value}
                               </span>
                             )}
                             <span
-                              className={`mt-1 inline-flex rounded border px-1.5 py-px text-[10px] font-semibold ${eligibilityColors[r.eligibility_status]}`}
+                              className={`mt-1 inline-flex rounded border px-1.5 py-px label-mono ${eligibilityColors[r.eligibility_status]}`}
                             >
                               {eligibilityLabels[r.eligibility_status]}
                             </span>

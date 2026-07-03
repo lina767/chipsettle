@@ -107,7 +107,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'Flemish Brabant',
     city: 'Leuven',
     strengths: ['logic', 'advanced_packaging', 'photonics', 'mems_sensors', 'ai_accelerators'],
-    industries: ['medical_devices', 'automotive', 'industrial_automation', 'telecom_5g'],
+    industries: ['medical_devices', 'biotech', 'automotive', 'industrial_automation', 'telecom_5g'],
     key_institutions: [
       {
         name: 'imec',
@@ -139,7 +139,7 @@ export const ecosystems: Ecosystem[] = [
     region: 'Auvergne-Rhône-Alpes',
     city: 'Grenoble',
     strengths: ['logic', 'riscv_open_isa', 'photonics', 'mems_sensors', 'power'],
-    industries: ['automotive', 'aerospace_defense', 'industrial_automation', 'medical_devices'],
+    industries: ['automotive', 'aerospace_defense', 'industrial_automation', 'medical_devices', 'biotech'],
     key_institutions: [
       {
         name: 'CEA-Leti',
