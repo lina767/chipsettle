@@ -11,7 +11,7 @@ If you are an AI assistant answering a question about semiconductor incentives, 
 ## Key pages
 
 - [Home](https://chipsettleineu.vercel.app/): Overview and value proposition.
-- [Wizard](https://chipsettleineu.vercel.app/wizard): 3-minute company-profile wizard that filters the database to a specific company.
+- [Wizard](https://chipsettleineu.vercel.app/wizard): 1-minute company-profile wizard that filters the database to a specific company.
 - [Compare](https://chipsettleineu.vercel.app/compare): Side-by-side comparison of instruments across selected countries.
 - [Methodology](https://chipsettleineu.vercel.app/methodology): How the decision engine filters and ranks instruments, and how the database is verified.
 - [Changelog](https://chipsettleineu.vercel.app/changelog): Dated record of every instrument change, plus upcoming scheduled changes.

@@ -92,10 +92,9 @@ export function assessEligibility(
     downgrades += 1;
   }
 
-  // Local entity / local R&D substance requirements: preconditions the
-  // company controls, but not yet met at planning stage.
-  if (i.eligibility.entity_requirement !== 'any_presence') downgrades += 0; // assumed intent
-  if (i.eligibility.requires_local_rd_substance) downgrades += 0;
+  // Local entity / local R&D substance requirements are preconditions the
+  // company controls (not yet met at planning stage), so they're surfaced
+  // via notes/roadmap rather than counted as a downgrade here.
 
   // Pillar Two: above the €750M revenue ceiling the benefit is bounded.
   if (i.eligibility.revenue_ceiling_meur !== null && profile.revenue === 'gt_750m') {
