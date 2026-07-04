@@ -16,6 +16,7 @@ import {
   ExcludedInstruments,
   RoadmapView,
 } from './AnalysisSections';
+import ShareButton from './ShareButton';
 
 /**
  * Personalized instrument dashboard. The full profile — including the
@@ -52,13 +53,16 @@ export default function ResultsDashboard() {
           <p className="eyebrow mb-1">Dashboard</p>
           <h1 className="text-2xl text-slate-900">Your instruments</h1>
         </div>
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="no-print rounded-lg border hairline bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          ⬇ Export PDF
-        </button>
+        <div className="flex items-center gap-2 no-print">
+          <ShareButton profile={profile} />
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="rounded-lg border hairline bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            ⬇ Export PDF
+          </button>
+        </div>
       </div>
 
       <ProfileSummary profile={profile} />
