@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://chipsettle.example.com',
+  site: 'https://chipsettleineu.vercel.app',
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
