@@ -18,7 +18,7 @@ import {
   revenueBandLabels,
   sectorLabels,
 } from '../lib/labels';
-import { defaultProfile, profileToParams } from '../lib/profile';
+import { buildResultsUrl, defaultProfile, loadEstimateInputs, saveEstimateInputs } from '../lib/profile';
 import { targetableCountries } from '../data/countries';
 
 const steps = [
@@ -97,6 +97,10 @@ export default function Wizard() {
     sectors: [],
     industries: [],
     targetCountries: [],
+    // Prefill from this tab's session only — never from the URL. Lets a
+    // user revisit the wizard within the same session without retyping
+    // sensitive figures, without ever putting them in a link.
+    ...loadEstimateInputs(),
   });
   const [compareAll, setCompareAll] = useState(false);
 
@@ -131,7 +135,12 @@ export default function Wizard() {
 
   const setNum = (key: 'rdEngineers' | 'rdPersonnelCost' | 'ipSharePct', raw: string) => {
     const v = raw === '' ? undefined : Number(raw);
-    set(key, Number.isFinite(v as number) ? (v as number) : undefined);
+    const value = Number.isFinite(v as number) ? (v as number) : undefined;
+    setProfile((p) => {
+      const next = { ...p, [key]: value };
+      saveEstimateInputs(next); // persist to this tab's session as you type
+      return next;
+    });
   };
 
   const step1Valid = profile.sectors.length > 0;
@@ -142,7 +151,11 @@ export default function Wizard() {
     const finalProfile: CompanyProfile = compareAll
       ? { ...profile, targetCountries: [] }
       : profile;
-    window.location.href = `/results?${profileToParams(finalProfile).toString()}`;
+    // Convenience prefill for revisiting the wizard in this tab.
+    saveEstimateInputs(finalProfile);
+    // The full profile (incl. estimate inputs) travels in the URL fragment,
+    // which browsers never send to a server — see profile.ts.
+    window.location.href = buildResultsUrl(finalProfile);
   };
 
   return (
@@ -259,6 +272,9 @@ export default function Wizard() {
         <div className="space-y-8">
           <div className="rounded-lg border hairline bg-slate-50 px-4 py-3 text-sm text-slate-600">
             📊 Optional — for a rough <strong>support estimate</strong> per country. Skip to leave it out.
+            <span className="block mt-1 text-xs text-slate-500">
+              🔒 Stays in this browser tab only — never added to the shareable results link.
+            </span>
           </div>
           <Field label="Planned R&D engineers at the site">
             <input

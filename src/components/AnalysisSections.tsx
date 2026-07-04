@@ -39,6 +39,9 @@ export function EstimatePanel({
       <div className="rounded-lg border hairline bg-slate-50 p-5 text-sm text-slate-600">
         📊 Add R&D headcount or cost in the wizard for a rough per-country estimate.{' '}
         <a href="/wizard" className="text-blue-800 underline">Add numbers ↺</a>
+        <span className="block mt-1 text-xs text-slate-400">
+          🔒 These figures live only in your browser tab — a shared link never carries them, so this is expected if you opened someone else's link.
+        </span>
       </div>
     );
   }

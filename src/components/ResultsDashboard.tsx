@@ -5,7 +5,7 @@ import {
   getRelevantInstruments,
   groupResultsByCountry,
 } from '../lib/engine';
-import { profileFromParams } from '../lib/profile';
+import { decodeProfileHash, loadEstimateInputs, profileFromParams } from '../lib/profile';
 import { getCountry, seededCountrySlugs } from '../data/countries';
 import ProfileSummary from './ProfileSummary';
 import ComparisonTable from './ComparisonTable';
@@ -18,15 +18,21 @@ import {
 } from './AnalysisSections';
 
 /**
- * Personalized instrument dashboard. The profile is read from URL query
- * parameters so results are shareable links; the comparison view is the
- * default output when multiple countries are selected.
+ * Personalized instrument dashboard. The full profile — including the
+ * support-estimate inputs — is decoded from the URL fragment (`#p=...`),
+ * which browsers never send to a server, so a shared link reproduces the
+ * complete result for whoever opens it without those figures ever
+ * appearing in a server/proxy access log. Query params (coarse fields
+ * only) and this tab's sessionStorage are the fallback for links that
+ * predate the fragment, or don't carry one (e.g. from /compare).
  */
 export default function ResultsDashboard() {
-  const profile: CompanyProfile = useMemo(
-    () => profileFromParams(new URLSearchParams(window.location.search)),
-    [],
-  );
+  const profile: CompanyProfile = useMemo(() => {
+    const fromHash = decodeProfileHash(window.location.hash);
+    if (fromHash) return fromHash;
+    const base = profileFromParams(new URLSearchParams(window.location.search));
+    return { ...base, ...loadEstimateInputs() };
+  }, []);
 
   const results = useMemo(() => getRelevantInstruments(profile), [profile]);
   const excluded = useMemo(() => getExcludedInstruments(profile), [profile]);
