@@ -64,6 +64,7 @@ export type Industry =
   | 'telecom_5g'
   | 'data_center_hpc'
   | 'medical_devices'
+  | 'biotech'
   | 'energy_grid'
   | 'other';
 

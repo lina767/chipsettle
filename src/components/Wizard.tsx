@@ -84,7 +84,7 @@ function ChipButton({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-slate-900 mb-2">{label}</h3>
+      <h3 className="label-mono text-slate-500 mb-2">{label}</h3>
       {children}
     </div>
   );
@@ -226,8 +226,7 @@ export default function Wizard() {
               ))}
             </div>
             <p className="text-xs text-slate-500 mt-2">
-              The €750M threshold matters: above it, Pillar Two (15% global minimum tax) bounds
-              the benefit of preferential IP regimes.
+              ⚠ Above <span className="mono">€750M</span>: Pillar Two (15% floor) bounds IP-box benefits.
             </p>
           </Field>
 
@@ -250,8 +249,7 @@ export default function Wizard() {
               ))}
             </div>
             <p className="text-xs text-slate-500 mt-2">
-              The end markets your chips serve. Used to show ecosystem fit against regional
-              clusters known for these industries — it doesn't filter which instruments apply.
+              🗺 Your end markets → drives ecosystem fit, not instrument filtering.
             </p>
           </Field>
         </div>
@@ -259,9 +257,8 @@ export default function Wizard() {
 
       {step === 1 && (
         <div className="space-y-8">
-          <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-            Optional — fill these in to get a rough <strong>support estimate</strong> per country on
-            your dashboard. Skip to leave the estimate out; everything else works without it.
+          <div className="rounded-lg border hairline bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            📊 Optional — for a rough <strong>support estimate</strong> per country. Skip to leave it out.
           </div>
           <Field label="Planned R&D engineers at the site">
             <input
@@ -286,7 +283,7 @@ export default function Wizard() {
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white"
             />
             <p className="text-xs text-slate-500 mt-2">
-              Fully loaded. Left blank, we assume €110k per engineer.
+              Fully loaded. Blank → assumes <span className="mono">€110k</span>/engineer.
             </p>
           </Field>
           <Field label="Share of revenue that is licensable IP income (%)">
@@ -300,9 +297,7 @@ export default function Wizard() {
               placeholder="e.g. 20"
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white"
             />
-            <p className="text-xs text-slate-500 mt-2">
-              Used to estimate IP-box savings. Combined with your revenue band midpoint.
-            </p>
+            <p className="text-xs text-slate-500 mt-2">→ Drives the IP-box savings estimate.</p>
           </Field>
         </div>
       )}

@@ -25,7 +25,7 @@ export function TypeBadge({ type }: { type: Instrument['instrument_type'] }) {
 export function StatusBadge({ status }: { status: Instrument['status'] }) {
   return (
     <span
-      className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium uppercase tracking-wide ${statusColors[status]}`}
+      className={`inline-flex items-center rounded border px-1.5 py-0.5 label-mono ${statusColors[status]}`}
     >
       {statusLabels[status]}
     </span>
@@ -48,18 +48,18 @@ export function VerificationLine({ instrument }: { instrument: Instrument }) {
   const recent = hasRecentChange(instrument.changelog);
   return (
     <span className="inline-flex flex-wrap items-center gap-2 text-xs">
-      <span className={stale ? 'text-amber-700 font-medium' : 'text-slate-500'}>
-        Verified: {formatDate(instrument.last_verified)}
-        {stale && ' ⚠ over 6 months old'}
+      <span className={`mono ${stale ? 'text-amber-700 font-medium' : 'text-slate-500'}`}>
+        ✓ {formatDate(instrument.last_verified)}
+        {stale && ' ⚠ >6mo'}
       </span>
       {recent && (
-        <span className="inline-flex items-center rounded bg-blue-100 text-blue-900 px-1.5 py-0.5 font-medium">
-          Recently changed
+        <span className="inline-flex items-center rounded bg-blue-100 text-blue-900 px-1.5 py-0.5 label-mono">
+          ● Recently changed
         </span>
       )}
       {instrument.needs_verification && (
-        <span className="inline-flex items-center rounded bg-amber-100 text-amber-900 px-1.5 py-0.5 font-medium">
-          Parameters pending verification
+        <span className="inline-flex items-center rounded bg-amber-100 text-amber-900 px-1.5 py-0.5 label-mono">
+          ⚠ Verify pending
         </span>
       )}
     </span>

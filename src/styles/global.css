@@ -1,11 +1,26 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------- */
+/* ChipSettle — technical light design system                             */
+/* Light, institutional ground with a technical character: grotesk        */
+/* headings, monospace for every figure/date/parameter, hairline rules,   */
+/* uppercase mono eyebrows. No serif.                                      */
+/* ---------------------------------------------------------------------- */
+
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --color-ink: #0f172a;
-  --color-paper: #ffffff;
-  --color-accent: #1e3a8a;
+  --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", "JetBrains Mono",
+    "Menlo", "Consolas", monospace;
+
+  /* Cool near-white ground with a faint blue bias (chosen, not default). */
+  --color-paper: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-ink: #0d1526;
+  --color-accent: #1b3a8f;
+
+  /* Signal accent for active/interactive technical highlights. */
+  --color-signal: #0768d6;
 }
 
 html {
@@ -13,8 +28,68 @@ html {
 }
 
 body {
-  @apply bg-white text-slate-900 antialiased;
-  font-feature-settings: "tnum" 1; /* tabular numerals for parameter tables */
+  background: var(--color-paper);
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-sans);
+}
+
+/* Headings: tight grotesk, negative tracking — technical, not editorial. */
+h1, h2, h3, h4 {
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Every figure/date/code/parameter uses tabular monospace. */
+.mono,
+.tnum,
+time,
+[data-figure] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "ss01" 1;
+}
+
+/* Uppercase technical eyebrow / small label. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Hairline helper for technical dividers. */
+.hairline {
+  border-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
+}
+
+/* Focus ring — visible and on-brand. */
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Subtle technical corner-tick accent used on hero/section markers. */
+.tick::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid var(--color-accent);
+  border-top: 2px solid var(--color-accent);
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -26,6 +101,7 @@ body {
   }
   body {
     font-size: 11px;
+    background: #fff;
   }
   a {
     text-decoration: none;

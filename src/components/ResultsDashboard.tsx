@@ -42,53 +42,42 @@ export default function ResultsDashboard() {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
-          Your instrument dashboard
-        </h1>
+        <div>
+          <p className="eyebrow mb-1">Dashboard</p>
+          <h1 className="text-2xl text-slate-900">Your instruments</h1>
+        </div>
         <button
           type="button"
           onClick={() => window.print()}
-          className="no-print rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="no-print rounded-lg border hairline bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
         >
-          ⬇ Export PDF summary
+          ⬇ Export PDF
         </button>
       </div>
 
       <ProfileSummary profile={profile} />
 
       {results.length === 0 ? (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
-          No instruments in the database match this profile.{' '}
-          <a href="/wizard" className="text-blue-800 underline">
-            Adjust your profile
-          </a>{' '}
-          or check the{' '}
-          <a href="/methodology" className="text-blue-800 underline">
-            coverage notes
-          </a>
-          .
+        <div className="rounded-lg border hairline bg-slate-50 p-8 text-center text-slate-500">
+          No matches. <a href="/wizard" className="text-blue-800 underline">Adjust profile</a> or check{' '}
+          <a href="/methodology" className="text-blue-800 underline">coverage notes</a>.
         </div>
       ) : (
         <>
           {/* 1. Support estimate (Rechnung) */}
           <section>
-            <h2 className="text-lg font-semibold text-slate-900 mb-1">
-              Rough support estimate
-            </h2>
+            <h2 className="text-lg text-slate-900 mb-1 tick">Support estimate</h2>
             <p className="text-sm text-slate-500 mb-4">
-              Estimated annual public support per country for your profile — an orientation figure
-              with visible assumptions, not tax advice.
+              📊 Rough annual figure per country — visible assumptions, not tax advice.
             </p>
             <EstimatePanel profile={profile} results={results} countrySlugs={targetSlugs} />
           </section>
 
           {targetSlugs.length >= 2 && (
             <section>
-              <h2 className="text-lg font-semibold text-slate-900 mb-1">
-                Country comparison for your profile
-              </h2>
+              <h2 className="text-lg text-slate-900 mb-1 tick">Country comparison</h2>
               <p className="text-sm text-slate-500 mb-4">
-                {results.length} instruments match your profile across{' '}
+                <span className="mono">{results.length}</span> instruments match your profile across{' '}
                 {targetSlugs.length} countries plus the EU level. Click any instrument for
                 full parameters, legal basis, and changelog.
               </p>
@@ -106,12 +95,10 @@ export default function ResultsDashboard() {
             const isEU = slug === 'eu';
             return (
               <section key={slug} className="space-y-4">
-                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <h2 className="text-lg text-slate-900 flex items-center gap-2 tick">
                   <span aria-hidden="true">{country?.flag_emoji}</span>
-                  {isEU ? 'EU-level instruments' : country?.name}
-                  <span className="text-sm font-normal text-slate-400">
-                    {items.length} instrument{items.length === 1 ? '' : 's'}
-                  </span>
+                  {isEU ? 'EU-level' : country?.name}
+                  <span className="mono text-xs font-normal text-slate-400">{items.length}</span>
                 </h2>
 
                 {!isEU && <EcosystemFitView profile={profile} countrySlug={slug} />}
@@ -123,11 +110,11 @@ export default function ResultsDashboard() {
                 </div>
 
                 {!isEU && (
-                  <details className="rounded-lg border border-slate-200 bg-white group">
+                  <details className="rounded-lg border hairline bg-white group">
                     <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-800 flex items-center justify-between">
-                      <span>Action roadmap for {country?.name}</span>
-                      <span className="text-slate-400 text-xs group-open:hidden">Show sequence</span>
-                      <span className="text-slate-400 text-xs hidden group-open:inline">Hide</span>
+                      <span>🧭 Roadmap — {country?.name}</span>
+                      <span className="label-mono text-slate-400 group-open:hidden">Show</span>
+                      <span className="label-mono text-slate-400 hidden group-open:inline">Hide</span>
                     </summary>
                     <div className="border-t border-slate-100 p-4">
                       <RoadmapView profile={profile} results={results} countrySlug={slug} />
@@ -146,12 +133,8 @@ export default function ResultsDashboard() {
       )}
 
       <p className="text-xs text-slate-400 border-t border-slate-100 pt-4">
-        Ranked by relevance for your profile: rule-based entitlements before discretionary
-        programs, active before proposed, weighted by fiscal impact. See{' '}
-        <a href="/methodology" className="underline">
-          methodology
-        </a>{' '}
-        for the exact scoring.
+        Ranked: rule-based &gt; discretionary, active &gt; proposed, weighted by fiscal impact. See{' '}
+        <a href="/methodology" className="underline">methodology</a>.
       </p>
     </div>
   );

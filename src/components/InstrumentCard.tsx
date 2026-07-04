@@ -70,8 +70,8 @@ export default function InstrumentCard({ result }: { result: InstrumentResult })
         <dl className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
           {i.parameters.slice(0, 4).map((p) => (
             <div key={p.label} className="flex gap-2 items-baseline">
-              <dt className="text-slate-500 shrink-0">{p.label}:</dt>
-              <dd className="font-medium text-slate-900">{p.value}</dd>
+              <dt className="label-mono text-slate-400 shrink-0 pt-0.5">{p.label}</dt>
+              <dd className="mono text-[12.5px] font-medium text-slate-900">{p.value}</dd>
             </div>
           ))}
         </dl>

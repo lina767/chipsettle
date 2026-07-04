@@ -37,15 +37,16 @@ export default function ComparePage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
-          Country comparison
-        </h1>
+        <div>
+          <p className="eyebrow mb-1">Compare</p>
+          <h1 className="text-2xl text-slate-900">Country comparison</h1>
+        </div>
         <button
           type="button"
           onClick={() => window.print()}
-          className="no-print rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="no-print rounded-lg border hairline bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
         >
-          ⬇ Export PDF summary
+          ⬇ Export PDF
         </button>
       </div>
 
@@ -72,15 +73,8 @@ export default function ComparePage() {
       <ComparisonTable profile={profile} results={results} countrySlugs={selected} />
 
       <p className="text-sm text-slate-500">
-        The comparison reflects the profile above.{' '}
-        <a href="/wizard" className="text-blue-800 underline">
-          Run the wizard
-        </a>{' '}
-        to tailor it to your company, or open the{' '}
-        <a href={`/results?${profileToParams(profile).toString()}`} className="text-blue-800 underline">
-          full dashboard
-        </a>{' '}
-        with instrument cards and eligibility notes.
+        <a href="/wizard" className="text-blue-800 underline">Run the wizard →</a> to tailor this, or open the{' '}
+        <a href={`/results?${profileToParams(profile).toString()}`} className="text-blue-800 underline">full dashboard</a>.
       </p>
     </div>
   );

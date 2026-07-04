@@ -54,7 +54,7 @@ const SECTORS: Sector[] = [
 const GOALS: Goal[] = ['design_site', 'rd_cooperation', 'fab_site', 'pilot_lines', 'ip_domiciliation'];
 const INDUSTRIES: Industry[] = [
   'automotive', 'robotics', 'consumer_electronics', 'industrial_automation',
-  'aerospace_defense', 'telecom_5g', 'data_center_hpc', 'medical_devices', 'energy_grid', 'other',
+  'aerospace_defense', 'telecom_5g', 'data_center_hpc', 'medical_devices', 'biotech', 'energy_grid', 'other',
 ];
 
 function pick<T extends string>(value: string | null, allowed: T[], fallback: T): T {
