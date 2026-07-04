@@ -105,6 +105,35 @@ export type InstrumentLevel = 'national' | 'eu' | 'regional';
 // Collection: countries
 // ---------------------------------------------------------------------------
 
+/**
+ * Foreign direct investment screening relevant to semiconductor/critical-tech
+ * investors. `covers_greenfield` is deliberately not a plain boolean: most
+ * regimes historically target acquisitions of existing entities, but the
+ * 2025 EU FDI Screening Regulation reform designates semiconductors a
+ * "hyper-critical" technology and several member states are actively
+ * expanding scope — so "no" would be misleadingly reassuring.
+ */
+export interface FdiScreening {
+  applies_to_sector: boolean;
+  covers_greenfield: 'rarely' | 'sometimes' | 'check_current_rules';
+  threshold: string;
+  authority: string;
+  typical_timeline: string;
+  legal_basis: string;
+  legal_basis_url: string;
+  notes: string;
+  last_verified: string;
+}
+
+/** Orientation-level labor law snapshot — not a substitute for local counsel. */
+export interface LaborLawSnapshot {
+  works_council_threshold: string;
+  notice_periods: string;
+  collective_bargaining: string;
+  notes: string;
+  last_verified: string;
+}
+
 export interface Country {
   name: string;
   code: string; // "DE", "NL", ... "EU" is used for the EU level
@@ -114,6 +143,8 @@ export interface Country {
   pillar_two_implemented: boolean;
   notes: string;
   last_verified: string; // ISO date
+  fdi_screening?: FdiScreening;
+  labor_law?: LaborLawSnapshot;
 }
 
 // ---------------------------------------------------------------------------
@@ -192,6 +223,17 @@ export interface Instrument {
 
   /** Optional benefit model used by the support estimate (Rechnung). */
   estimate?: EstimateModel;
+
+  /**
+   * Illustrative months from a standing start to realized cash, for the
+   * quantified rule-based/hybrid instruments only — entity formation is
+   * added on top by the time-to-cash calculation. Approximate by design;
+   * labeled as such wherever shown.
+   */
+  cash_timeline_months?: { min: number; max: number };
+
+  /** Free text: the recurring cadence of claiming/maintaining this instrument after first use, if any. */
+  recurring?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -211,6 +253,8 @@ export interface Ecosystem {
   cluster_programs: { name: string; url: string; description: string }[];
   notes: string;
   last_verified: string;
+  /** Fully-loaded annual cost (€) for a senior IC/RTL design engineer in this hub — market benchmark, not a survey of any single employer. */
+  senior_engineer_cost_eur?: { min: number; max: number };
 }
 
 // ---------------------------------------------------------------------------
@@ -337,6 +381,7 @@ export interface EcosystemFit {
     city: string;
     matchedSectors: Sector[];
     matchedIndustries: Industry[];
+    senior_engineer_cost_eur?: { min: number; max: number };
   }[];
   /** Sectors the company selected that no local cluster covers. */
   unmatchedSectors: Sector[];

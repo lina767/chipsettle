@@ -37,6 +37,7 @@ export const ecosystems: Ecosystem[] = [
     notes:
       'Europe\'s largest semiconductor manufacturing location (Infineon, GlobalFoundries, Bosch, TSMC/ESMC), with a growing design layer on top of the manufacturing base.',
     last_verified: '2026-07-03',
+    senior_engineer_cost_eur: { min: 80_000, max: 105_000 },
   },
   {
     name: 'Munich / Bavaria',
@@ -68,6 +69,7 @@ export const ecosystems: Ecosystem[] = [
     notes:
       'Strong analog/mixed-signal and automotive design footprint (Infineon HQ, Apple, Intel, NXP design sites); the deepest pool of experienced design engineers in Germany.',
     last_verified: '2026-07-03',
+    senior_engineer_cost_eur: { min: 100_000, max: 130_000 },
   },
   {
     name: 'Brainport Eindhoven',
@@ -99,6 +101,7 @@ export const ecosystems: Ecosystem[] = [
     notes:
       'Anchored by ASML and NXP; the densest equipment-and-design ecosystem in Europe, with strong soft-landing support for foreign entrants.',
     last_verified: '2026-07-03',
+    senior_engineer_cost_eur: { min: 105_000, max: 140_000 },
   },
   {
     name: 'Leuven',
@@ -131,6 +134,7 @@ export const ecosystems: Ecosystem[] = [
     notes:
       'imec is the single strongest R&D-cooperation anchor in Europe: companies can work with advanced nodes without owning a fab.',
     last_verified: '2026-07-03',
+    senior_engineer_cost_eur: { min: 90_000, max: 125_000 },
   },
   {
     name: 'Grenoble',
@@ -162,6 +166,7 @@ export const ecosystems: Ecosystem[] = [
     notes:
       'STMicroelectronics and Soitec anchor the valley; CEA-Leti provides pilot-line and RISC-V cooperation routes.',
     last_verified: '2026-07-03',
+    senior_engineer_cost_eur: { min: 95_000, max: 135_000 },
   },
 ];
 

@@ -11,6 +11,8 @@ import ProfileSummary from './ProfileSummary';
 import ComparisonTable from './ComparisonTable';
 import InstrumentCard from './InstrumentCard';
 import {
+  ComplianceCalendar,
+  CumulationBanner,
   EcosystemFitView,
   EstimatePanel,
   ExcludedInstruments,
@@ -111,6 +113,8 @@ export default function ResultsDashboard() {
                   <span className="mono text-xs font-normal text-slate-400">{items.length}</span>
                 </h2>
 
+                <CumulationBanner results={results} countrySlug={slug} />
+
                 {!isEU && <EcosystemFitView profile={profile} countrySlug={slug} />}
 
                 <div className="space-y-3">
@@ -118,6 +122,8 @@ export default function ResultsDashboard() {
                     <InstrumentCard key={r.instrument.slug} result={r} />
                   ))}
                 </div>
+
+                <ComplianceCalendar results={results} countrySlug={slug} />
 
                 {!isEU && (
                   <details className="rounded-lg border hairline bg-white group">
