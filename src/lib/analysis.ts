@@ -195,7 +195,13 @@ export function ecosystemFit(countrySlug: string, p: CompanyProfile): EcosystemF
       const mi = p.industries.filter((ind) => e.industries.includes(ind));
       ms.forEach((s) => matchedSectors.add(s));
       mi.forEach((ind) => matchedIndustries.add(ind));
-      return { ecosystemName: e.name, city: e.city, matchedSectors: ms, matchedIndustries: mi };
+      return {
+        ecosystemName: e.name,
+        city: e.city,
+        matchedSectors: ms,
+        matchedIndustries: mi,
+        senior_engineer_cost_eur: e.senior_engineer_cost_eur,
+      };
     })
     .filter((m) => m.matchedSectors.length > 0 || m.matchedIndustries.length > 0);
 
@@ -354,4 +360,83 @@ export function buildRoadmap(
     summary: PHASE_META[id].summary,
     steps: buckets.get(id)!,
   })).filter((ph) => ph.steps.length > 0);
+}
+
+// ---------------------------------------------------------------------------
+// 4. Time to first cash — illustrative, not a commitment
+// ---------------------------------------------------------------------------
+
+/** Illustrative entity-formation months per country (fastest available path: GmbH/BV/branch). */
+const ENTITY_FORMATION_MONTHS: Record<string, { min: number; max: number }> = {
+  germany: { min: 0.5, max: 1.5 },
+  netherlands: { min: 0.25, max: 0.5 },
+  belgium: { min: 0.5, max: 1 },
+  france: { min: 0.5, max: 1.5 },
+  spain: { min: 0.5, max: 1.5 },
+};
+
+export interface CashTimeline {
+  countrySlug: string;
+  entityMonths: { min: number; max: number };
+  instrument: Instrument | null;
+  instrumentMonths: { min: number; max: number } | null;
+  totalMonths: { min: number; max: number } | null;
+}
+
+/**
+ * Rough "time to first cash" for a country: entity formation plus the
+ * fastest quantified rule-based/hybrid instrument's own certification and
+ * filing timeline. Deliberately illustrative — real timing depends on
+ * fiscal year alignment, application quality, and administrative backlog.
+ */
+export function estimateCashTimeline(
+  countrySlug: string,
+  results: InstrumentResult[],
+): CashTimeline {
+  const entityMonths = ENTITY_FORMATION_MONTHS[countrySlug] ?? { min: 0.5, max: 2 };
+  const candidates = results.filter(
+    (r) =>
+      r.instrument.country === countrySlug &&
+      r.instrument.cash_timeline_months &&
+      r.eligibility_status !== 'not_eligible' &&
+      (r.instrument.mechanism === 'rule_based' || r.instrument.mechanism === 'hybrid'),
+  );
+  if (candidates.length === 0) {
+    return { countrySlug, entityMonths, instrument: null, instrumentMonths: null, totalMonths: null };
+  }
+  const fastest = candidates.reduce((a, b) =>
+    a.instrument.cash_timeline_months!.max <= b.instrument.cash_timeline_months!.max ? a : b,
+  );
+  const im = fastest.instrument.cash_timeline_months!;
+  return {
+    countrySlug,
+    entityMonths,
+    instrument: fastest.instrument,
+    instrumentMonths: im,
+    totalMonths: { min: entityMonths.min + im.min, max: entityMonths.max + im.max },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 5. Cumulation / State aid ceiling advisory
+// ---------------------------------------------------------------------------
+
+/**
+ * Flags when 2+ discretionary or state-aid-type instruments match for a
+ * country — a cue to check EU cumulation limits (De Minimis, GBER aid
+ * intensity caps) before stacking them. Deliberately an advisory, not a
+ * computed pass/fail: actual state-aid classification of each scheme and
+ * the applicable ceiling depend on details this tool does not model.
+ */
+export function cumulationAdvisory(countrySlug: string, results: InstrumentResult[]): string | null {
+  const stateAidLike = results.filter(
+    (r) =>
+      r.instrument.country === countrySlug &&
+      r.eligibility_status !== 'not_eligible' &&
+      (r.instrument.mechanism === 'discretionary' ||
+        r.instrument.instrument_type === 'grant_program' ||
+        r.instrument.instrument_type === 'state_aid_scheme'),
+  );
+  if (stateAidLike.length < 2) return null;
+  return `Combining ${stateAidLike.length} discretionary/state-aid instruments here may run into EU cumulation limits (De Minimis €300k per 3 fiscal years, or GBER aid-intensity caps depending on the scheme) — verify with your advisor before stacking.`;
 }

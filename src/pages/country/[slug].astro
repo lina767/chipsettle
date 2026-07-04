@@ -149,6 +149,45 @@ const isEU = slug === 'eu';
       </section>
     )}
 
+    {country.fdi_screening && (
+      <section>
+        <h2 class="text-xl text-slate-900 mb-4 tick">FDI screening &amp; export control</h2>
+        <div class="rounded-lg border hairline bg-white p-4 sm:p-5">
+          {country.fdi_screening.applies_to_sector && (
+            <span class="label-mono rounded bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5">⚠ Semiconductors in scope</span>
+          )}
+          <dl class="mt-3 space-y-2 text-sm">
+            <div class="flex gap-4"><dt class="label-mono w-32 shrink-0 text-slate-400 pt-0.5">Threshold</dt><dd class="text-slate-900">{country.fdi_screening.threshold}</dd></div>
+            <div class="flex gap-4"><dt class="label-mono w-32 shrink-0 text-slate-400 pt-0.5">Authority</dt><dd class="text-slate-900">{country.fdi_screening.authority}</dd></div>
+            <div class="flex gap-4"><dt class="label-mono w-32 shrink-0 text-slate-400 pt-0.5">Timeline</dt><dd class="mono text-slate-900">{country.fdi_screening.typical_timeline}</dd></div>
+          </dl>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed">{country.fdi_screening.notes}</p>
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs text-slate-500">
+              Legal basis: {country.fdi_screening.legal_basis} —{' '}
+              <a href={country.fdi_screening.legal_basis_url} target="_blank" rel="noopener noreferrer" class="text-blue-800 hover:underline print-url">source ↗</a>
+            </span>
+            <span class="mono text-xs text-slate-400">✓ {formatDate(country.fdi_screening.last_verified)}</span>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {country.labor_law && (
+      <section>
+        <h2 class="text-xl text-slate-900 mb-4 tick">Labor law snapshot</h2>
+        <div class="rounded-lg border hairline bg-white p-4 sm:p-5">
+          <dl class="space-y-2 text-sm">
+            <div class="flex gap-4"><dt class="label-mono w-36 shrink-0 text-slate-400 pt-0.5">Works council</dt><dd class="text-slate-900">{country.labor_law.works_council_threshold}</dd></div>
+            <div class="flex gap-4"><dt class="label-mono w-36 shrink-0 text-slate-400 pt-0.5">Notice periods</dt><dd class="text-slate-900">{country.labor_law.notice_periods}</dd></div>
+            <div class="flex gap-4"><dt class="label-mono w-36 shrink-0 text-slate-400 pt-0.5">Bargaining</dt><dd class="text-slate-900">{country.labor_law.collective_bargaining}</dd></div>
+          </dl>
+          {country.labor_law.notes && <p class="mt-3 text-sm text-slate-600 leading-relaxed">{country.labor_law.notes}</p>}
+          <p class="mt-3 pt-3 border-t border-slate-100 mono text-xs text-slate-400">✓ {formatDate(country.labor_law.last_verified)} · orientation only, verify with local counsel</p>
+        </div>
+      </section>
+    )}
+
     {!isEU && (
       <section class="rounded-lg border hairline bg-slate-50 p-5 no-print">
         <h2 class="font-semibold text-slate-900 text-sm">Compare {country.name}</h2>

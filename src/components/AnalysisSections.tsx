@@ -6,7 +6,9 @@ import type {
 import { getCountry } from '../data/countries';
 import {
   buildRoadmap,
+  cumulationAdvisory,
   ecosystemFit,
+  estimateCashTimeline,
   estimateForCountry,
   DEFAULT_COST_PER_ENGINEER_EUR,
   REVENUE_MIDPOINT_EUR,
@@ -63,6 +65,7 @@ export function EstimatePanel({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {estimates.map((e) => {
           const country = getCountry(e.countrySlug);
+          const cash = estimateCashTimeline(e.countrySlug, results);
           return (
             <div
               key={e.countrySlug}
@@ -106,6 +109,17 @@ export function EstimatePanel({
                   + {e.competitiveCount} competitive grant{e.competitiveCount === 1 ? '' : 's'} (not quantified)
                 </p>
               )}
+              {cash.totalMonths && (
+                <p className="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
+                  ⏱ Illustrative time to first cash:{' '}
+                  <span className="mono font-medium text-slate-700">
+                    {cash.totalMonths.min.toFixed(1)}–{cash.totalMonths.max.toFixed(0)} months
+                  </span>
+                  <span className="block text-[11px] text-slate-400">
+                    Entity formation + {cash.instrument?.name.replace(/\s*\(.*?\)\s*/g, ' ').trim()}
+                  </span>
+                </p>
+              )}
             </div>
           );
         })}
@@ -128,6 +142,26 @@ export function EstimatePanel({
         </ul>
         <p className="mt-2 font-medium text-slate-700">⚠ Orientation only — not a tax computation.</p>
       </details>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 1b. Cumulation / State aid advisory
+// ---------------------------------------------------------------------------
+
+export function CumulationBanner({
+  results,
+  countrySlug,
+}: {
+  results: InstrumentResult[];
+  countrySlug: string;
+}) {
+  const advisory = cumulationAdvisory(countrySlug, results);
+  if (!advisory) return null;
+  return (
+    <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs text-amber-900">
+      ⚠ {advisory}
     </div>
   );
 }
@@ -220,6 +254,8 @@ export function EcosystemFitView({
     ];
     return parts.join(', ');
   };
+  const userCostPerEngineer =
+    profile.rdPersonnelCost && profile.rdEngineers ? profile.rdPersonnelCost / profile.rdEngineers : null;
 
   return (
     <div className="rounded-lg border hairline bg-white p-4 print-break-inside-avoid">
@@ -236,6 +272,18 @@ export function EcosystemFitView({
               <span className="font-medium">{m.ecosystemName}</span>{' '}
               <span className="text-slate-400 text-xs">({m.city})</span>
               <span className="block text-xs text-slate-500">matches your {matchLine(m)}</span>
+              {m.senior_engineer_cost_eur && (
+                <span className="block mono text-[11px] text-slate-400">
+                  💶 Senior design-engineer benchmark: €{(m.senior_engineer_cost_eur.min / 1000).toFixed(0)}k–{(m.senior_engineer_cost_eur.max / 1000).toFixed(0)}k/yr fully loaded
+                  {userCostPerEngineer && (
+                    <>
+                      {' '}— your assumption ≈€{(userCostPerEngineer / 1000).toFixed(0)}k
+                      {userCostPerEngineer < m.senior_engineer_cost_eur.min && ' (below local benchmark — you may be underestimating this site\'s cost)'}
+                      {userCostPerEngineer > m.senior_engineer_cost_eur.max && ' (above local benchmark)'}
+                    </>
+                  )}
+                </span>
+              )}
             </li>
           ))}
         </ul>
@@ -250,6 +298,38 @@ export function EcosystemFitView({
           {[...fit.unmatchedSectors.map((s) => sectorLabels[s]), ...fit.unmatchedIndustries.map((i) => industryLabels[i])].join(', ')}
         </p>
       )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 3b. Ongoing compliance calendar — what to keep doing after launch
+// ---------------------------------------------------------------------------
+
+export function ComplianceCalendar({
+  results,
+  countrySlug,
+}: {
+  results: InstrumentResult[];
+  countrySlug: string;
+}) {
+  const items = results.filter(
+    (r) => r.instrument.country === countrySlug && r.instrument.recurring && r.eligibility_status !== 'not_eligible',
+  );
+  if (items.length === 0) return null;
+  return (
+    <div className="rounded-lg border hairline bg-white p-4">
+      <h3 className="font-semibold text-slate-900 text-sm mb-2">🗓 Ongoing compliance</h3>
+      <ul className="space-y-2">
+        {items.map((r) => (
+          <li key={r.instrument.slug} className="text-sm">
+            <a href={`/instrument/${r.instrument.slug}`} className="font-medium text-slate-800 hover:text-blue-900 hover:underline">
+              {r.instrument.name}
+            </a>
+            <span className="block text-xs text-slate-500">{r.instrument.recurring}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
