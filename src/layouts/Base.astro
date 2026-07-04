@@ -23,6 +23,37 @@ const pageTitle = isHome
   : `${title} · ChipSettle`;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImageUrl = new URL('/og-image.png', Astro.site).toString();
+const siteUrl = Astro.site?.toString() ?? 'https://chipsettleineu.vercel.app/';
+
+// Structured data so search engines and AI answer engines can parse what
+// this site is and cite it accurately, without inventing anything (no
+// fabricated ratings/reviews).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}#website`,
+      url: siteUrl,
+      name: 'ChipSettle',
+      description:
+        'A structured navigator for semiconductor design settlement instruments in Europe — fiscal instruments, funding programs, and legal requirements, each with a legal basis, source, and verification date.',
+      inLanguage: 'en',
+    },
+    {
+      '@type': 'WebApplication',
+      '@id': `${siteUrl}#app`,
+      name: 'ChipSettle',
+      url: siteUrl,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any (web-based)',
+      description:
+        'Filters a hand-verified database of 34 European semiconductor design-settlement instruments (R&D tax credits, IP boxes, grant programs, legal steps) to a company profile. No AI-generated answers — every result cites a legal basis and a verification date.',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+      isAccessibleForFree: true,
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -49,6 +80,7 @@ const ogImageUrl = new URL('/og-image.png', Astro.site).toString();
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b hairline bg-white/85 backdrop-blur no-print sticky top-0 z-40">

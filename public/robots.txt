@@ -1,3 +1,38 @@
+# /results carries a company's profile in the query string and is
+# excluded from crawling/indexing for privacy reasons — every other page
+# is a static, verified reference page and is explicitly welcome to be
+# crawled, indexed, and cited, including by AI/answer-engine crawlers.
+# See /llms.txt for a curated summary of this site aimed at LLMs.
+
 User-agent: *
 Disallow: /results
 Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://chipsettleineu.vercel.app/sitemap-index.xml
